@@ -1,0 +1,207 @@
+{
+	"info": {
+		"_postman_id": "24d8c58e-6849-4aa7-bb69-a025366fb9d5",
+		"name": "VVKAZM",
+		"description": "# ⛓️ Get started here\n\nPostman allows you to test your APIs using simple Javascript code. You can evaluate your response body, headers, cookies, and more using the [ChaiJS BDD](https://www.chaijs.com/api/bdd/) syntax.\n\nThis template guides you through the process of setting up an integration test to ensure that all individual components of an API function together seamlessly.\n\nThe API under test in this collection includes three endpoints for registering and receiving a token, accessing your unique generated name, and unregistering a token:\n\n- POST `/register`\n- POST `/unregister`\n- GET `/my-name`\n    \n\nBy setting up requests in the order of the operation, we can test the flow of data to and from the endpoints and ensure they work together as expected. We also verify that the data persists between requests on the back end.\n\n## 🔖 **How to use this template**\n\n**Step 1:** Check out the requests' documentation to learn more about -\n\n- what each request is meant to do.\n- the tests we've added against each one.\n    \n\n**Step 2:** Run this collection by clicking on \"Run\".\n\n<img src=\"https://content.pstmn.io/84019b0f-69c8-4c5f-98b9-2c90a6f9a0b1/Y29sbGVjdGlvbi1ydW5uZXItYnV0dG9uLmpwZWc=\" alt=\"\" height=\"103\" width=\"266\">\n\n**Step 3:** To customize this template, replace the request URLs with your API endpoints and add or edit the tests if needed.\n\n## ℹ️ Resources\n\n[Scripting in Postman](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/)\n\n[Test script examples](https://learning.postman.com/docs/writing-scripts/script-references/test-examples/)\n\n[Postman Sandbox API reference](https://learning.postman.com/docs/sending-requests/grpc/postman-sandbox-api/#writing-assertions)\n\n[Using the Collection Runner](https://learning.postman.com/docs/collections/running-collections/intro-to-collection-runs/)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32765368"
+	},
+	"item": [
+		{
+			"name": "Streams",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Verificar que el código de estado de la respuesta es 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Verificar que la respuesta es un array\", function () {",
+							"    var jsonResponse = pm.response.json();",
+							"    pm.expect(jsonResponse).to.be.an('array');",
+							"});",
+							"",
+							"pm.test(\"Verificar cada objeto en el array para las propiedades 'title' y 'user_name'\", function () {",
+							"    var jsonResponse = pm.response.json();",
+							"    jsonResponse.forEach(function(item, index) {",
+							"        pm.expect(item, `Item en índice ${index} es un objeto`).to.be.an('object');",
+							"        pm.expect(item.title, `Item en índice ${index} tiene 'title'`).to.be.a('string');",
+							"        pm.expect(item.user_name, `Item en índice ${index} tiene 'user_name'`).to.be.a('string');",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://vvkazm.es/analytics/streams",
+					"protocol": "http",
+					"host": [
+						"vvkazm",
+						"es"
+					],
+					"path": [
+						"analytics",
+						"streams"
+					]
+				},
+				"description": "This request uses the saved `token` collection variable to access a secret 'name' stored against that token.\n\nIn this request, we used the `token` collection variable as a query param to fetch the name generated for that token. We have added a test to check that a name is correctly returned."
+			},
+			"response": []
+		},
+		{
+			"name": "Users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Verificar que el código de estado es 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Verificar estructura de la respuesta y tipos de datos\", function () {",
+							"    var responseJson = pm.response.json();",
+							"",
+							"    pm.expect(responseJson).to.be.an('object');",
+							"    pm.expect(responseJson.id, \"ID es una cadena\").to.be.a('string');",
+							"    pm.expect(responseJson.login, \"Login es una cadena\").to.be.a('string');",
+							"    pm.expect(responseJson.display_name, \"Display Name es una cadena\").to.be.a('string');",
+							"    pm.expect(responseJson.type, \"Type es una cadena\").to.be.a('string');",
+							"    pm.expect(responseJson.broadcaster_type, \"Broadcaster Type es una cadena\").to.be.a('string');",
+							"    pm.expect(responseJson.description, \"Description es una cadena\").to.be.a('string');",
+							"    pm.expect(responseJson.profile_image_url, \"Profile Image URL es una cadena\").to.be.a('string');",
+							"    pm.expect(responseJson.offline_image_url, \"Offline Image URL es una cadena\").to.be.a('string');",
+							"    pm.expect(responseJson.view_count, \"View Count es un número\").to.be.a('number');",
+							"    pm.expect(responseJson.created_at, \"Created At es una cadena\").to.be.a('string');",
+							"    pm.expect(responseJson.created_at).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$/, \"Created At sigue el formato ISO 8601\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://vvkazm.es/analytics/users?id=1234",
+					"protocol": "http",
+					"host": [
+						"vvkazm",
+						"es"
+					],
+					"path": [
+						"analytics",
+						"users"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1234"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Topsofthetops",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Verificar que el código de estado de la respuesta es 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Verificar estructura y tipos de datos de la respuesta\", function () {",
+							"    pm.response.to.be.ok; // Verifica que la respuesta sea exitosa",
+							"",
+							"    var jsonData = pm.response.json();",
+							"",
+							"    // Verifica que la respuesta sea un arreglo con tres elementos",
+							"    pm.expect(jsonData).to.be.an('array');",
+							"    pm.expect(jsonData).to.have.lengthOf(3);",
+							"",
+							"    // Verifica la estructura y los tipos de datos de cada elemento en el arreglo",
+							"    jsonData.forEach(video => {",
+							"        pm.expect(video).to.be.an('object');",
+							"        pm.expect(video).to.have.property('game_id').that.is.a('string');",
+							"        pm.expect(video).to.have.property('game_name').that.is.a('string');",
+							"        pm.expect(video).to.have.property('user_name').that.is.a('string');",
+							"        pm.expect(video).to.have.property('total_videos').that.is.a('string');",
+							"        pm.expect(video).to.have.property('total_views').that.is.a('string');",
+							"        pm.expect(video).to.have.property('most_viewed_title').that.is.a('string');",
+							"        pm.expect(video).to.have.property('most_viewed_views').that.is.a('string');",
+							"        pm.expect(video).to.have.property('most_viewed_duration').that.is.a('string');",
+							"        pm.expect(video).to.have.property('most_viewed_created_at').that.is.a('string');",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://vvkazm.es/analytics/topsofthetops",
+					"protocol": "http",
+					"host": [
+						"vvkazm",
+						"es"
+					],
+					"path": [
+						"analytics",
+						"topsofthetops"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
