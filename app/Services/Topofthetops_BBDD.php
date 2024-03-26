@@ -17,6 +17,7 @@ class Topofthetops_BBDD
 
         // Consulta para obtener los datos requeridos
         $top_data = DB::table('top_videos')
+        
             ->select('user_name', DB::raw('COUNT(*) AS total_videos'), DB::raw('SUM(video_views) AS total_views'), DB::raw('MAX(video_views) AS most_viewed_views'))
             ->where('game_id', $gameId)
             ->groupBy('user_name')
@@ -27,7 +28,6 @@ class Topofthetops_BBDD
         if (!$top_data) {
             return json_encode(['error' => 'No se encontraron datos para el game_id proporcionado en la tabla top_videos.']);
         }
-
         // Consulta para obtener los detalles del vídeo más visto del usuario obtenido
         $video_details = DB::table('top_videos')
             ->select('video_title', 'duration', 'created_at')
@@ -39,8 +39,8 @@ class Topofthetops_BBDD
         // Insertar o actualizar datos en la tabla topofthetops
         DB::table('topofthetops')
             ->updateOrInsert(
-                ['game_id' => $gameId],
-                [
+                [   
+                    'game_id' => $gameId,
                     'game_name' => $game_name,
                     'user_name' => $top_data->user_name,
                     'total_videos' => $top_data->total_videos,
@@ -52,6 +52,7 @@ class Topofthetops_BBDD
                     'last_updated_at' => now(),
                 ]
             );
+            
 
         return json_encode(["success" => "Datos actualizados exitosamente en la tabla topofthetops para el gameId: $gameId."]);
     }

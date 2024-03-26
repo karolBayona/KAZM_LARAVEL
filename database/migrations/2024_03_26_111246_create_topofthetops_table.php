@@ -21,7 +21,7 @@ return new class extends Migration
             $table->integer('most_viewed_views')->nullable()->default(null);
             $table->string('most_viewed_duration')->nullable()->default(null);
             $table->string('most_viewed_created_at')->nullable()->default(null);
-            $table->string('last_updated_at')->nullable()->default(now());
+            $table->date('last_updated_at')->nullable()->default(null);
         });
     }
 

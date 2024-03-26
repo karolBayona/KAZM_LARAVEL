@@ -9,6 +9,7 @@ class Top_games
 {
     public static function updateTopGames()
     {
+
         // Parámetros de la API de Twitch
         $client_id = '8sjfuizn8p9ee61m0rpd5rxg1kopfg';
         $token = 'z859ot3xmyincj3uyf2wf62kfc5958';
@@ -27,10 +28,12 @@ class Top_games
 
         // Verificar si la respuesta contiene datos
         if (isset($data['data']) && !empty($data['data'])) {
+
             DB::table('top_games')->truncate();
 
             // Insertar o actualizar juegos en la base de datos
             foreach ($data['data'] as $game) {
+
                 $game_id = $game['id'];
                 $game_name = $game['name'];
 
@@ -39,9 +42,9 @@ class Top_games
                     ['game_name' => $game_name]
                 );
             }
-
             return "Datos actualizados exitosamente.";
         } else {
+
             return "No se encontraron datos en la respuesta de la API de Twitch.";
         }
     }

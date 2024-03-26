@@ -31,17 +31,18 @@ class Topofthetops extends Controller
                 // La tabla está vacía, forzar actualización
                 $this->updateGameData($gameId);
             } else {
+
                 // Verificar si ya existen datos actualizados para este juego en 'topofthetops'
                 $lastUpdatedAt = DB::table('topofthetops')
                     ->where('game_id', $gameId)
-                    ->value(DB::raw("TIMESTAMPDIFF(SECOND, last_updated_at, NOW()) AS diff"));
+                    ->selectRaw('TIMESTAMPDIFF(SECOND, last_updated_at, NOW()) AS diff')
+                    ->value('diff');
 
                 if ($lastUpdatedAt === null || $lastUpdatedAt > $since) {
                     $this->updateGameData($gameId);
                 }
             }
         }
-
         // Obtener y devolver los datos actualizados de 'topofthetops'
         $data = DB::table('topofthetops as tt')
             ->join('top_games as tg', 'tt.game_id', '=', 'tg.game_id')
