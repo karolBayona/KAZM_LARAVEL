@@ -14,3 +14,4 @@ use App\Http\Controllers\Users;
 Route::get('/analytics/users', [Users::class, 'getUser']);
 
 Route::get('/analytics/streams', [Streams::class, 'getStreams']);
+
