@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\DB;
+use App\Models\Token; // Asegúrate de importar tu modelo Token
 use Illuminate\Support\Facades\Http;
 
 class TokenTwitch
@@ -18,12 +18,13 @@ class TokenTwitch
 
     public function getToken()
     {
-        $accessToken = DB::table('token')->first();
+        // Usar Eloquent para recuperar el token más reciente
+        $accessToken = Token::latest('created_at')->first();
 
         if ($accessToken) {
             return $accessToken->token;
         }
-        
+
         return $this->fetchTokenFromApi();
     }
 
@@ -38,13 +39,12 @@ class TokenTwitch
         if ($response->successful()) {
             $newToken = $response->json('access_token');
 
-            DB::table('token')->insert([
-                'token' => $newToken,
-                'created_at' => now(),
+            // Crear un nuevo registro de token usando Eloquent
+            Token::create([
+            'token' => $newToken,
             ]);
 
             return $newToken;
         }
-
     }
 }

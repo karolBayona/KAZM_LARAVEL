@@ -49,7 +49,7 @@ class Topofthetops_BBDD
                     'most_viewed_views' => $top_data->most_viewed_views,
                     'most_viewed_duration' => $video_details->duration,
                     'most_viewed_created_at' => $video_details->created_at,
-                    'last_updated_at' => now(),
+                    'last_updated_at' => now()
                 ]
             );
             
