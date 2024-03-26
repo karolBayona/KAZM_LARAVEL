@@ -31,7 +31,6 @@ class Topofthetops extends Controller
                 // La tabla está vacía, forzar actualización
                 $this->updateGameData($gameId);
             } else {
-
                 // Verificar si ya existen datos actualizados para este juego en 'topofthetops'
                 $lastUpdatedAt = DB::table('topofthetops')
                     ->where('game_id', $gameId)
@@ -43,13 +42,14 @@ class Topofthetops extends Controller
                 }
             }
         }
+
         // Obtener y devolver los datos actualizados de 'topofthetops'
         $data = DB::table('topofthetops as tt')
             ->join('top_games as tg', 'tt.game_id', '=', 'tg.game_id')
             ->select('tt.game_id', 'tt.game_name', 'tt.user_name', 'tt.total_videos', 'tt.total_views', 'tt.most_viewed_title', 'tt.most_viewed_views', 'tt.most_viewed_duration', 'tt.most_viewed_created_at')
             ->get();
 
-        return response()->json($data);
+        return response()->json($data, 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 
     // Función para actualizar los datos de un juego específico
