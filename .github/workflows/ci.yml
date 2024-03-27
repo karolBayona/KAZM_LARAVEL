@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: composer install
+
+    - name: Run unit tests
+      run: phpunit
+
+    - name: Run PHPCS
+      run: vendor/bin/phpcs --standard=PSR12 .
+
+    - name: Run PHPMD
+      run: vendor/bin/phpmd . text cleancode,codesize,controversial,design,naming,unusedcode
