@@ -1,0 +1,30 @@
+grumphp:
+  tasks:
+    git_commit_message:
+      allow_empty_message: false
+      enforce_capitalized_subject: false
+      enforce_no_subject_trailing_period: true
+      max_body_width: 72
+      max_subject_width: 80
+      case_insensitive: false
+      multiline: true
+      matchers:
+        - '/^\[\d+\] - .+$/'
+    phpcsfixer2:
+      config: '.php-cs-fixer.dist.php'
+      verbose: true
+    phpmd:
+      whitelist_patterns: []
+      exclude: []
+      report_format: text
+      ruleset: ['cleancode', 'codesize', 'naming']
+      triggered_by: ['php']
+    phpcs:
+      standard: ['PSR12']
+      report: full
+      whitelist_patterns:
+        - 'app/*.php'
+        - 'app/**/*.php'
+      triggered_by: [php]
+      exclude: []
+      show_sniffs_error_path: true
