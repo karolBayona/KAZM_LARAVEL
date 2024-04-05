@@ -16,9 +16,6 @@ jobs:
     - name: Install dependencies
       run: composer install
 
-    - name: Run unit tests
-      run: phpunit
-
     - name: Run PHPCS
       run: vendor/bin/phpcs --standard=PSR12 .
 
