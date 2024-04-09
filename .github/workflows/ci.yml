@@ -13,10 +13,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: php version
-      run: sudo add-apt-repository ppa:ondrej/php
-      run: sudo apt update
-      run: sudo apt install php8.2 php8.2-{cli,curl,bz2,mbstring,intl,xml}
+    - name: Set up PHP 8.2
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
 
     - name: Install dependencies
       run: composer install
