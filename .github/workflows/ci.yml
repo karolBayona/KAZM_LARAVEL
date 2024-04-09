@@ -21,8 +21,8 @@ jobs:
     - name: Install dependencies
       run: composer install
 
-    # - name: Run PHPCS
-    #   run: vendor/bin/phpcs --standard=PSR12 .
+    - name: Run PHPCS
+      run: vendor/bin/phpcs --standard=PSR12 .
 
-    # - name: Run PHPMD
-    #   run: vendor/bin/phpmd . text cleancode,codesize,controversial,design,naming,unusedcode
+    - name: Run PHPMD
+      run: vendor/bin/phpmd . text cleancode,codesize,controversial,design,naming,unusedcode
