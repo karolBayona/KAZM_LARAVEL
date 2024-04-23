@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Token; // Asegúrate de importar tu modelo Token
+use App\Models\Token;
 use Illuminate\Support\Facades\Http;
 
 class TokenTwitch
@@ -12,7 +12,7 @@ class TokenTwitch
 
     public function __construct()
     {
-        $this->clientID = env('TWITCH_CLIENT_ID');
+        $this->clientID     = env('TWITCH_CLIENT_ID');
         $this->clientSecret = env('TWITCH_CLIENT_SECRET');
     }
 
@@ -31,9 +31,9 @@ class TokenTwitch
     private function fetchTokenFromApi()
     {
         $response = Http::asForm()->post('https://id.twitch.tv/oauth2/token', [
-            'client_id' => $this->clientID,
+            'client_id'     => $this->clientID,
             'client_secret' => $this->clientSecret,
-            'grant_type' => 'client_credentials',
+            'grant_type'    => 'client_credentials',
         ]);
 
         if ($response->successful()) {
