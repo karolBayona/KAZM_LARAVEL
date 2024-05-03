@@ -18,6 +18,6 @@ class StreamsController extends Controller
     {
         $streams = $this->getStreamsService->executeGetStreams();
 
-        return response()->json($streams);
+        return response()->json($streams, 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 }
