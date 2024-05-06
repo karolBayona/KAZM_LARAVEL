@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Infrastructure\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Http;
 use App\Services\TokenTwitch;
 use App\Services\TwitchUserService;
 
-class UsersController extends Controller
+class UsersController
 {
     private TwitchUserService $twitchUserService;
 

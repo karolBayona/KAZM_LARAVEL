@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Infrastructure\Controllers;
 
 use App\Services\GetStreamsService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class StreamsController extends Controller
+class StreamsController
 {
     private GetStreamsService $getStreamsService;
     public function __construct(GetStreamsService  $getStreamsService)
