@@ -2,22 +2,19 @@
 
 namespace App\Infrastructure\Controllers;
 
-use App\Services\GetStreamsService;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use App\Services\StreamsDataManager\StreamsDataProvider;
 
 class StreamsController
 {
-    private GetStreamsService $getStreamsService;
-    public function __construct(GetStreamsService  $getStreamsService)
+    private StreamsDataProvider $streamsDataProvider;
+
+    public function __construct(StreamsDataProvider $streamsDataProvider)
     {
-        $this->getStreamsService = $getStreamsService;
+        $this->streamsDataProvider = $streamsDataProvider;
     }
 
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke()
     {
-        $streams = $this->getStreamsService->executeGetStreams();
-
-        return response()->json($streams, 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        return $this->streamsDataProvider->fetchAndSerializeStreamsData();
     }
 }

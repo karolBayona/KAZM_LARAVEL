@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Services\StreamsDataManager;
+namespace App\Services;
 
-use App\Infrastructure\Clients\DBClient;
 use App\Infrastructure\Clients\APIClient;
+use App\Infrastructure\Clients\DBClient;
+use Exception;
 
 class TokenProvider
 {
-    private $clientID;
-    private $clientSecret;
+    private mixed $clientID;
+    private mixed $clientSecret;
     private APIClient $clientAPI;
     private DBClient $clientDB;
 
@@ -21,6 +22,9 @@ class TokenProvider
         $this->clientDB  = new DBClient();
     }
 
+    /**
+     * @throws Exception
+     */
     public function getToken()
     {
         $accessToken = $this->clientDB->getTokenDB();
@@ -32,19 +36,26 @@ class TokenProvider
         return $this->fetchTokenFromApi();
     }
 
+    /**
+     * @throws Exception
+     */
     private function fetchTokenFromApi()
     {
         $response = $this->clientAPI->getNewTokenFromApi($this->clientID, $this->clientSecret);
 
         if (!$response->successful()) {
-            return 0;
+            throw new Exception('No se puede establecer conexión con Twitch en este momento', 503);
         }
 
         $newToken = $response->json('access_token');
 
+        if (!$newToken) {
+            throw new Exception('No se pudo obtener un nuevo token de Twitch', 503);
+        }
+
         $this->clientDB->setTokenDB($newToken);
 
         return $newToken;
-
     }
+
 }
