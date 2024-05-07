@@ -23,7 +23,7 @@ class APIClient
         ])->get('https://api.twitch.tv/helix/streams');
     }
 
-    private function getDataForUserFromAPI(mixed $clientID, mixed $accessToken, int $userID): \Illuminate\Http\Client\Response|\GuzzleHttp\Promise\PromiseInterface
+    public function getDataForUserFromAPI(mixed $clientID, mixed $accessToken, int $userID): \Illuminate\Http\Client\Response|\GuzzleHttp\Promise\PromiseInterface
     {
         return Http::withHeaders([
             'Client-ID'     => $clientID,
