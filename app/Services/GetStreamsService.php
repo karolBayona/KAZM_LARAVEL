@@ -24,13 +24,7 @@ class GetStreamsService
         return $this->getJsonDataOfStreams($liveStreamsDataResponse['data']);
     }
 
-    public function getApiDataResponseForStreams(mixed $clientID, mixed $accessToken): \Illuminate\Http\Client\Response|\GuzzleHttp\Promise\PromiseInterface
-    {
-        return Http::withHeaders([
-            'Client-ID' => $clientID,
-            'Authorization' => 'Bearer ' . $accessToken,
-        ])->get('https://api.twitch.tv/helix/streams');
-    }
+
 
     public function getJsonDataOfStreams($liveStreamsDataResponse): array
     {

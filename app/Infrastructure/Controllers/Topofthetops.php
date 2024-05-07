@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Infrastructure\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -8,7 +8,7 @@ use App\Services\Top_games;
 use App\Services\Top_videos;
 use App\Services\Topofthetops_BBDD;
 
-class Topofthetops extends Controller
+class Topofthetops
 {
     public function getTopOfTheTops(Request $request)
     {

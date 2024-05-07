@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Token; // Asegúrate de importar tu modelo Token
+use App\Models\Token;
 use Illuminate\Support\Facades\Http;
 
 class TokenTwitch
