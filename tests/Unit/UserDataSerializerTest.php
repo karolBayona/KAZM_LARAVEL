@@ -38,4 +38,28 @@ class UserDataSerializerTest extends TestCase
 
         $this->assertEquals($expectedData, $serializedData);
     }
+    public function test_streams_serializable_with_missing_data()
+    {
+        $userData = [
+            'id'                => 123,
+            'login'             => 'john_doe',
+        ];
+
+        $serializedData = UserDataSerializer::serialize($userData);
+
+        $expectedData = [
+            'id'                => 123,
+            'username'          => 'john_doe',
+            'display_name'      => '',
+            'type'              => '',
+            'broadcaster_type'  => '',
+            'description'       => '',
+            'profile_image_url' => '',
+            'offline_image_url' => '',
+            'view_count'        => 0,
+            'created_at'        => null,
+        ];
+
+        $this->assertEquals($expectedData, $serializedData);
+    }
 }
