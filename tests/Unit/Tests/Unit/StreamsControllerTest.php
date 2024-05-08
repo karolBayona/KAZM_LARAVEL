@@ -1,15 +1,15 @@
 <?php
 
-namespace Infrastructure;
+namespace Tests\Unit;
 
-use Tests\TestCase;
 use App\Infrastructure\Controllers\StreamsController;
-use Illuminate\Http\JsonResponse;
 use App\Services\StreamsDataManager\StreamsDataProvider;
 use Exception;
+use Illuminate\Http\JsonResponse;
+use Tests\TestCase;
 use Mockery;
 
-class StreamsControllerTest extends TestCase
+class StreamsControllerUnitTest extends TestCase
 {
     public function test_invoke_returns_json_response()
     {
@@ -48,8 +48,6 @@ class StreamsControllerTest extends TestCase
         $this->assertEquals(503, $response->getStatusCode());
         $this->assertMatchesRegularExpression("/$expectedError/", $actualError);
     }
-
-
 
     public function test_invoke_handles_unknown_error()
     {

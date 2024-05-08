@@ -1,6 +1,7 @@
 <?php
 
 namespace Tests\Feature;
+
 use App\Services\UserDataManager\UserDataProvider;
 use Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -45,5 +46,17 @@ class UsersControllerIntegrationTest extends TestCase
 
         $response->assertStatus(404);
         $response->assertExactJson(['error' => 'Datos de usuario no encontrados.']);
+    }
+
+    public function test_invoke_handles_service_unavailable()
+    {
+        $this->mock(UserDataProvider::class, function ($mock) {
+            $mock->shouldReceive('execute')->andThrow(new Exception('Service unavailable', 503));
+        });
+
+        $response = $this->get('/analytics/users?id=123');
+
+        $response->assertStatus(503);
+        $response->assertExactJson(['error' => 'Servicio no disponible. Por favor, inténtelo más tarde.']);
     }
 }
