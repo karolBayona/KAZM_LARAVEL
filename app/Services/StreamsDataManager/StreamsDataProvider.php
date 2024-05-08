@@ -2,46 +2,40 @@
 
 namespace App\Services\StreamsDataManager;
 
+use App\Config\TwitchConfig;
 use App\Services\TokenProvider;
 use App\Infrastructure\Clients\APIClient;
 use App\Infrastructure\Serializers\StreamsDataSerializer;
+use Exception;
 use Illuminate\Http\JsonResponse;
+
+/**
+ * @SuppressWarnings(PHPMD.StaticAccess)
+ */
 
 class StreamsDataProvider
 {
     private TokenProvider $tokenProvider;
-    private APIClient $apiClient;
+    private GetStreamsService $streamsManager;
 
     public function __construct(TokenProvider $tokenProvider, APIClient $apiClient)
     {
-        $this->tokenProvider = $tokenProvider;
-        $this->apiClient     = $apiClient;
+        $this->tokenProvider  = $tokenProvider;
+        $this->streamsManager = new GetStreamsService($apiClient);
     }
 
-    public function fetchAndSerializeStreamsData(): JsonResponse
+    /**
+     * @throws Exception
+     */
+    public function execute(): JsonResponse
     {
-        try {
-            $accessToken = $this->tokenProvider->getToken();
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], $e->getCode());
-        }
+        $accessToken = $this->tokenProvider->getToken();
+        $clientId    = TwitchConfig::clientId();
 
-        $response = $this->apiClient->getDataForStreamsFromAPI(env('TWITCH_CLIENT_ID'), $accessToken);
-        if (!$response->successful()) {
-            if ($response->status() == 500) {
-                return response()->json(['error' => 'No se pueden devolver streams en este momento, inténtalo más tarde'], 503);
-            }
-            return response()->json(['error' => 'No se pudieron obtener los datos de los streams'], $response->status());
-        }
+        $data = $this->streamsManager->getStreams($clientId, $accessToken);
 
-        $responseData = $response->json();
-        if (!isset($responseData['data'])) {
-            return response()->json(['error' => 'No se encontraron datos de stream'], 404);
-        }
+        $formattedData = StreamsDataSerializer::serialize($data);
 
-        $formattedData = StreamsDataSerializer::serialize($responseData['data']);
         return response()->json($formattedData, 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
-
-
 }
