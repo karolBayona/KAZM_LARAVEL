@@ -8,8 +8,8 @@ class StreamsDataSerializer
     {
         return array_map(function ($stream) {
             return [
-                'title' => $stream['title'],
-                'user_name' => $stream['user_name'],
+                'title' => $stream['title'] ?? null,
+                'user_name' => $stream['user_name'] ?? null,
             ];
         }, $streamData);
     }
