@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Infrastructure\Controllers;
+namespace Infrastructure;
 
 use Tests\TestCase;
 use App\Infrastructure\Controllers\StreamsController;

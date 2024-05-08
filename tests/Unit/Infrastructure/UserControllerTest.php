@@ -27,7 +27,7 @@ class UserControllerTest extends TestCase
     public function test_invoke_handles_missing_user_id()
     {
         $controller = new UserController(Mockery::mock(UserDataProvider::class));
-        $request = Request::create('/user', 'GET');
+        $request = Request::create('/user');
 
         $response = $controller->__invoke($request);
 
