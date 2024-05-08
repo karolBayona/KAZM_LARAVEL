@@ -2,7 +2,6 @@
 
 namespace App\Services\StreamsDataManager;
 
-use App\Config\TwitchConfig;
 use App\Services\TokenProvider;
 use App\Infrastructure\Clients\APIClient;
 use App\Infrastructure\Serializers\StreamsDataSerializer;
@@ -30,9 +29,8 @@ class StreamsDataProvider
     public function execute(): JsonResponse
     {
         $accessToken = $this->tokenProvider->getToken();
-        $clientId    = TwitchConfig::clientId();
 
-        $data = $this->streamsManager->getStreams($clientId, $accessToken);
+        $data = $this->streamsManager->getStreams($accessToken);
 
         $formattedData = StreamsDataSerializer::serialize($data);
 

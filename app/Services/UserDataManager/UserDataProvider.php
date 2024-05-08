@@ -2,7 +2,6 @@
 
 namespace App\Services\UserDataManager;
 
-use App\Config\TwitchConfig;
 use App\Infrastructure\Clients\APIClient;
 use App\Infrastructure\Clients\DBClient;
 use App\Services\TokenProvider;
@@ -31,9 +30,8 @@ class UserDataProvider
     public function execute(int $userID): JsonResponse
     {
         $accessToken = $this->tokenProvider->getToken();
-        $clientId    = TwitchConfig::clientId();
 
-        $data = $this->userManager->getUser($clientId, $accessToken, $userID);
+        $data = $this->userManager->getUser($accessToken, $userID);
 
         $formattedData = UserDataSerializer::serialize($data);
 

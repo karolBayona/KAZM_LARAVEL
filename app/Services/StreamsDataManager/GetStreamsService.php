@@ -17,9 +17,9 @@ class GetStreamsService
     /**
      * @throws Exception
      */
-    public function getStreams(string $clientId, string $accessToken): array
+    public function getStreams(string $accessToken): array
     {
-        $response = $this->apiClient->getDataForStreamsFromAPI($clientId, $accessToken);
+        $response = $this->apiClient->getDataForStreamsFromAPI($accessToken);
 
         if (!$response->successful()) {
             if ($response->status() == 500) {

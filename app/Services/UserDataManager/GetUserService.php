@@ -4,6 +4,7 @@ namespace App\Services\UserDataManager;
 
 use App\Infrastructure\Clients\APIClient;
 use App\Infrastructure\Clients\DBClient;
+use Exception;
 
 /**
  * @SuppressWarnings(PHPMD.StaticAccess)
@@ -20,9 +21,12 @@ class GetUserService
         $this->dbClient  = $dbClient;
     }
 
-    public function getUser(string $clientId, string $accessToken, int $userID)
+    /**
+     * @throws Exception
+     */
+    public function getUser(string $accessToken, int $userID)
     {
-        $response = $this->apiClient->getDataForUserFromAPI($clientId, $accessToken, $userID);
+        $response = $this->apiClient->getDataForUserFromAPI($accessToken, $userID);
 
         if (!$response->successful()) {
             if ($response->status() == 500) {

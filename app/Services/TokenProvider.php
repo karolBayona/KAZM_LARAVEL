@@ -19,8 +19,7 @@ class TokenProvider
 
     public function __construct()
     {
-        $this->clientID     = TwitchConfig::clientId();
-        $this->clientSecret = TwitchConfig::clientSecret();
+
 
         $this->clientAPI = new APIClient();
         $this->clientDB  = new DBClient();
@@ -43,7 +42,7 @@ class TokenProvider
      */
     private function fetchTokenFromApi()
     {
-        $response = $this->clientAPI->getNewTokenFromApi($this->clientID, $this->clientSecret);
+        $response = $this->clientAPI->getNewTokenFromApi();
         if (!$response->successful()) {
             throw new Exception('No se puede establecer conexión con Twitch en este momento', 503);
         }
