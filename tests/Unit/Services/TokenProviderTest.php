@@ -12,83 +12,72 @@ use Exception;
 
 class TokenProviderTest extends TestCase
 {
-    /**
-     * @throws Exception
-     * @throws Exception|\PHPUnit\Framework\MockObject\Exception
-     */
-    public function test_FetchTokenFromApi_no_stored_token_Success()
+    private APIClient $apiClientMock;
+    private DBClient $dbClientMock;
+    private TokenProvider $tokenProvider;
+
+    protected function setUp(): void
     {
         $_ENV['TWITCH_CLIENT_ID']     = TwitchConfig::clientId();
         $_ENV['TWITCH_CLIENT_SECRET'] = TwitchConfig::clientSecret();
 
-        $apiClientMock = $this->getMockBuilder(APIClient::class)
+        $this->apiClientMock = $this->getMockBuilder(APIClient::class)
             ->onlyMethods(['getNewTokenFromApi'])
             ->getMock();
 
+        $this->dbClientMock = $this->getMockBuilder(DBClient::class)
+            ->onlyMethods(['getTokenDB', 'setTokenDB'])
+            ->getMock();
+
+        $this->tokenProvider = new TokenProvider();
+        $this->tokenProvider->setAPIClient($this->apiClientMock);
+        $this->tokenProvider->setDBClient($this->dbClientMock);
+    }
+
+    /**
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     * @throws Exception
+     */
+    public function test_FetchTokenFromApi_no_stored_token_Success()
+    {
         $responseMock = $this->createMock(Response::class);
         $responseMock->method('successful')->willReturn(true);
         $responseMock->method('json')->willReturn(['access_token' => 'newToken']);
 
-        $apiClientMock->expects($this->once())
+        $this->apiClientMock->expects($this->once())
             ->method('getNewTokenFromApi')
             ->willReturn($responseMock);
 
-        $dbClientMock = $this->getMockBuilder(DBClient::class)
-            ->onlyMethods(['getTokenDB', 'setTokenDB'])
-            ->getMock();
-
-        $dbClientMock->expects($this->once())
+        $this->dbClientMock->expects($this->once())
             ->method('getTokenDB')
             ->willReturn(null);
 
-        $dbClientMock->expects($this->once())
+        $this->dbClientMock->expects($this->once())
             ->method('setTokenDB');
 
-        $tokenProvider = new TokenProvider();
-        $tokenProvider->setAPIClient($apiClientMock);
-        $tokenProvider->setDBClient($dbClientMock);
-
-        $tokenProvider->getToken();
+        $this->tokenProvider->getToken();
 
         $this->assertTrue(true, 'setTokenDB fue llamado correctamente');
     }
 
-    /**
-     * @throws Exception
-     */
     public function test_FetchTokenFromApi_NoStoredToken_ApiError()
     {
-        $_ENV['TWITCH_CLIENT_ID']     = TwitchConfig::clientId();
-        $_ENV['TWITCH_CLIENT_SECRET'] = TwitchConfig::clientSecret();
-
-        $apiClientMock = $this->getMockBuilder(APIClient::class)
-            ->onlyMethods(['getNewTokenFromApi'])
-            ->getMock();
-
-        $apiClientMock->expects($this->once())
+        $this->apiClientMock->expects($this->once())
             ->method('getNewTokenFromApi')
             ->willThrowException(new Exception('Error al obtener el token de la API de Twitch', 500));
 
-        $dbClientMock = $this->getMockBuilder(DBClient::class)
-            ->onlyMethods(['getTokenDB', 'setTokenDB'])
-            ->getMock();
-
-        $dbClientMock->expects($this->once())
+        $this->dbClientMock->expects($this->once())
             ->method('getTokenDB')
             ->willReturn(null);
 
-        $dbClientMock->expects($this->never())
+        $this->dbClientMock->expects($this->never())
             ->method('setTokenDB');
-
-        $tokenProvider = new TokenProvider();
-        $tokenProvider->setAPIClient($apiClientMock);
-        $tokenProvider->setDBClient($dbClientMock);
 
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Error al obtener el token de la API de Twitch');
         $this->expectExceptionCode(500);
 
-        $tokenProvider->getToken();
+        $this->tokenProvider->getToken();
     }
 
     /**
@@ -96,33 +85,18 @@ class TokenProviderTest extends TestCase
      */
     public function test_FetchTokenFromDB_Success()
     {
-        $_ENV['TWITCH_CLIENT_ID']     = TwitchConfig::clientId();
-        $_ENV['TWITCH_CLIENT_SECRET'] = TwitchConfig::clientSecret();
-
-        $apiClientMock = $this->getMockBuilder(APIClient::class)
-            ->onlyMethods(['getNewTokenFromApi'])
-            ->getMock();
-
-        $apiClientMock->expects($this->never())
+        $this->apiClientMock->expects($this->never())
             ->method('getNewTokenFromApi');
 
-        $dbClientMock = $this->getMockBuilder(DBClient::class)
-            ->onlyMethods(['getTokenDB', 'setTokenDB'])
-            ->getMock();
-
         $storedToken = (object) ['token' => 'storedToken'];
-        $dbClientMock->expects($this->once())
+        $this->dbClientMock->expects($this->once())
             ->method('getTokenDB')
             ->willReturn($storedToken);
 
-        $dbClientMock->expects($this->never())
+        $this->dbClientMock->expects($this->never())
             ->method('setTokenDB');
 
-        $tokenProvider = new TokenProvider();
-        $tokenProvider->setAPIClient($apiClientMock);
-        $tokenProvider->setDBClient($dbClientMock);
-
-        $token = $tokenProvider->getToken();
+        $token = $this->tokenProvider->getToken();
 
         $this->assertEquals($storedToken->token, $token, 'El token devuelto por getToken es el mismo que el almacenado en la base de datos');
     }
