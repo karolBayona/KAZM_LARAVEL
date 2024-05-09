@@ -27,6 +27,22 @@ class TokenProvider
     }
 
     /**
+     * @param APIClient $clientAPI
+     */
+    public function setAPIClient(APIClient $clientAPI): void
+    {
+        $this->clientAPI = $clientAPI;
+    }
+
+    /**
+     * @param DBClient $clientDB
+     */
+    public function setDBClient(DBClient $clientDB): void
+    {
+        $this->clientDB = $clientDB;
+    }
+
+    /**
      * @throws Exception
      */
     public function getToken()
