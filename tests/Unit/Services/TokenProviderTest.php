@@ -2,6 +2,7 @@
 
 namespace Services;
 
+use App\Config\TwitchConfig;
 use Illuminate\Http\Client\Response;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
@@ -17,8 +18,8 @@ class TokenProviderTest extends TestCase
      */
     public function test_FetchTokenFromApi_no_stored_token_Success()
     {
-        $_ENV['TWITCH_CLIENT_ID']     = 'your_client_id';
-        $_ENV['TWITCH_CLIENT_SECRET'] = 'your_client_secret';
+        $_ENV['TWITCH_CLIENT_ID']     = TwitchConfig::clientId();
+        $_ENV['TWITCH_CLIENT_SECRET'] = TwitchConfig::clientSecret();
 
         $apiClientMock = $this->getMockBuilder(APIClient::class)
             ->onlyMethods(['getNewTokenFromApi'])
