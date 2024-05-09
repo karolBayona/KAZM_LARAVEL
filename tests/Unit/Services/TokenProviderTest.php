@@ -90,4 +90,40 @@ class TokenProviderTest extends TestCase
 
         $tokenProvider->getToken();
     }
+
+    /**
+     * @throws Exception
+     */
+    public function test_FetchTokenFromDB_Success()
+    {
+        $_ENV['TWITCH_CLIENT_ID']     = TwitchConfig::clientId();
+        $_ENV['TWITCH_CLIENT_SECRET'] = TwitchConfig::clientSecret();
+
+        $apiClientMock = $this->getMockBuilder(APIClient::class)
+            ->onlyMethods(['getNewTokenFromApi'])
+            ->getMock();
+
+        $apiClientMock->expects($this->never())
+            ->method('getNewTokenFromApi');
+
+        $dbClientMock = $this->getMockBuilder(DBClient::class)
+            ->onlyMethods(['getTokenDB', 'setTokenDB'])
+            ->getMock();
+
+        $storedToken = (object) ['token' => 'storedToken'];
+        $dbClientMock->expects($this->once())
+            ->method('getTokenDB')
+            ->willReturn($storedToken);
+
+        $dbClientMock->expects($this->never())
+            ->method('setTokenDB');
+
+        $tokenProvider = new TokenProvider();
+        $tokenProvider->setAPIClient($apiClientMock);
+        $tokenProvider->setDBClient($dbClientMock);
+
+        $token = $tokenProvider->getToken();
+
+        $this->assertEquals($storedToken->token, $token, 'El token devuelto por getToken es el mismo que el almacenado en la base de datos');
+    }
 }
