@@ -21,6 +21,9 @@ class GetUserService
         $this->dbClient  = $dbClient;
     }
 
+    /**
+     * @throws Exception
+     */
     public function getUser(string $clientId, string $accessToken, int $userID)
     {
         $response = $this->apiClient->getDataForUserFromAPI($clientId, $accessToken, $userID);
@@ -33,7 +36,7 @@ class GetUserService
         }
 
         $responseData = $response->json();
-        if (!isset($responseData['data'])) {
+        if (empty($responseData['data'])) {
             throw new Exception('No se encontraron datos de usuario', 404);
         }
 
@@ -44,4 +47,5 @@ class GetUserService
 
         return $userData;
     }
+
 }

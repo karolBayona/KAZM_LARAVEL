@@ -84,4 +84,29 @@ class GetUserServiceTest extends TestCase
 
         $service->getUser('clientId', 'accessToken', 1);
     }
+
+    /**
+     * @throws \Exception|Exception
+     */
+    public function test_get_user_successful_response_without_data()
+    {
+        $apiClientMock = $this->createMock(APIClient::class);
+        $dbClientMock  = $this->createMock(DBClient::class);
+        $responseMock  = $this->createMock(Response::class);
+        $service       = new GetUserService($apiClientMock, $dbClientMock);
+
+        $apiClientMock->method('getDataForUserFromAPI')
+            ->willReturn($responseMock);
+
+        $responseMock->method('successful')
+            ->willReturn(true);
+
+        $responseMock->method('json')
+            ->willReturn(['data' => []]);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('No se encontraron datos de usuario');
+
+        $service->getUser('clientId', 'accessToken', 1);
+    }
 }
