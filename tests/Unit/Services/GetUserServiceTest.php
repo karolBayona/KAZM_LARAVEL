@@ -7,14 +7,15 @@ use App\Infrastructure\Clients\DBClient;
 use App\Services\UserDataManager\GetUserService;
 use Illuminate\Http\Client\Response;
 use PHPUnit\Framework\MockObject\Exception;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class GetUserServiceTest extends TestCase
 {
-    private $apiClientMock;
-    private $dbClientMock;
-    private $responseMock;
-    private $service;
+    private MockObject|APIClient $apiClientMock;
+    private MockObject|DBClient $dbClientMock;
+    private Response|MockObject $responseMock;
+    private GetUserService $service;
 
     /**
      * @throws Exception

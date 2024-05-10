@@ -1,14 +1,20 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
+namespace Infrastructure;
+
 use App\Infrastructure\Serializers\UserDataSerializer;
 use Carbon\Carbon;
+use PHPUnit\Framework\TestCase;
 
 class UserDataSerializerTest extends TestCase
 {
-    public function test_users_serialize_with_complete_data()
+    protected array $userData;
+
+    protected function setUp(): void
     {
-        $userData = [
+        parent::setUp();
+
+        $this->userData = [
             'id'                => 123,
             'login'             => 'john_doe',
             'display_name'      => 'John Doe',
@@ -18,10 +24,13 @@ class UserDataSerializerTest extends TestCase
             'profile_image_url' => 'https://example.com/profile.jpg',
             'offline_image_url' => 'https://example.com/offline.jpg',
             'view_count'        => 500,
-            'created_at'        => '2024-05-01T12:00:00+00:00', // Fecha en formato ISO 8601
+            'created_at'        => '2024-05-01T12:00:00+00:00',
         ];
+    }
 
-        $serializedData = UserDataSerializer::serialize($userData);
+    public function test_users_serialize_with_complete_data()
+    {
+        $serializedData = UserDataSerializer::serialize($this->userData);
 
         $expectedData = [
             'id'                => 123,
@@ -38,14 +47,15 @@ class UserDataSerializerTest extends TestCase
 
         $this->assertEquals($expectedData, $serializedData);
     }
+
     public function test_streams_serializable_with_missing_data()
     {
-        $userData = [
-            'id'                => 123,
-            'login'             => 'john_doe',
+        $userDataWithMissingFields = [
+            'id'    => 123,
+            'login' => 'john_doe',
         ];
 
-        $serializedData = UserDataSerializer::serialize($userData);
+        $serializedData = UserDataSerializer::serialize($userDataWithMissingFields);
 
         $expectedData = [
             'id'                => 123,

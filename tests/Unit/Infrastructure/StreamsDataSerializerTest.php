@@ -7,34 +7,33 @@ use PHPUnit\Framework\TestCase;
 
 class StreamsDataSerializerTest extends TestCase
 {
+    protected array $streamData;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->streamData = [
+            ['title' => 'Stream 1', 'user_name' => 'user1'],
+            ['title' => 'Stream 2', 'user_name' => 'user2'],
+            ['title' => 'Stream 3', 'user_name' => 'user3'],
+        ];
+    }
+
     public function test_streams_serialize_with_complete_data()
     {
-        $streamData = [
-            ['title' => 'Stream 1', 'user_name' => 'user1'],
-            ['title' => 'Stream 2', 'user_name' => 'user2'],
-            ['title' => 'Stream 3', 'user_name' => 'user3'],
-        ];
+        $serializedData = StreamsDataSerializer::serialize($this->streamData);
 
-        $serializedData = StreamsDataSerializer::serialize($streamData);
-
-        $expectedData = [
-            ['title' => 'Stream 1', 'user_name' => 'user1'],
-            ['title' => 'Stream 2', 'user_name' => 'user2'],
-            ['title' => 'Stream 3', 'user_name' => 'user3'],
-        ];
-
-        $this->assertEquals($expectedData, $serializedData);
+        $this->assertEquals($this->streamData, $serializedData);
     }
 
     public function test_streams_serializable_with_missing_data()
     {
-        $streamData = [
+        $streamDataWithMissingFields = [
             ['title' => 'Stream 1'],
             ['user_name' => 'user2'],
-            ['title' => 'Stream 3', 'user_name' => 'user3'],
+            ['title'     => 'Stream 3', 'user_name' => 'user3'],
         ];
-
-        $serializedData = StreamsDataSerializer::serialize($streamData);
 
         $expectedData = [
             ['title' => 'Stream 1', 'user_name' => null],
@@ -42,7 +41,8 @@ class StreamsDataSerializerTest extends TestCase
             ['title' => 'Stream 3', 'user_name' => 'user3'],
         ];
 
+        $serializedData = StreamsDataSerializer::serialize($streamDataWithMissingFields);
+
         $this->assertEquals($expectedData, $serializedData);
     }
-
 }
