@@ -2,45 +2,35 @@
 
 namespace Services;
 
-use App\Services\GetStreamsService;
-use Illuminate\Support\Facades\Http;
+use App\Infrastructure\Clients\APIClient;
+use App\Services\StreamsDataManager\GetStreamsService;
+use Illuminate\Http\Client\Response;
 use PHPUnit\Framework\MockObject\Exception;
-use Tests\TestCase;
+use PHPUnit\Framework\TestCase;
 
 class GetStreamsServiceTest extends TestCase
 {
     /**
      * @throws Exception
+     * @throws \Exception
      */
-    public function testExecuteGetStreams_ReturnsCorrectDataFromTwitchAPI()
+    public function test_get_streams_successful_response_with_data()
     {
-        // Mocking dependencies
-        $tokenTwitchMock = $this->createMock(\App\Services\TokenTwitch::class);
-        $tokenTwitchMock->method('getToken')->willReturn('mocked_access_token');
+        $apiClientMock = $this->createMock(APIClient::class);
+        $responseMock  = $this->createMock(Response::class);
 
-        // Mocking HTTP response
-        $streamsApiResponse = [
-            'data' => [
-                ['title' => 'Stream 1', 'user_name' => 'user1'],
-                ['title' => 'Stream 2', 'user_name' => 'user2'],
-            ]
-        ];
-        Http::fake([
-            'https://api.twitch.tv/helix/streams' => Http::response($streamsApiResponse, 200)
-        ]);
+        $apiClientMock->method('getDataForStreamsFromAPI')
+            ->willReturn($responseMock);
 
-        // Create an instance of GetStreamsService with mocked dependencies
-        $service = new GetStreamsService($tokenTwitchMock);
+        $responseMock->method('successful')
+            ->willReturn(true);
 
-        // Call the method we want to test
-        $result = $service->executeGetStreams();
+        $responseMock->method('json')
+            ->willReturn(['data' => ['stream1', 'stream2']]);
 
-        // Assertions
-        $this->assertIsArray($result);
-        $this->assertCount(2, $result);
-        $this->assertEquals('Stream 1', $result[0]['title']);
-        $this->assertEquals('user1', $result[0]['user_name']);
-        $this->assertEquals('Stream 2', $result[1]['title']);
-        $this->assertEquals('user2', $result[1]['user_name']);
+        $service = new GetStreamsService($apiClientMock);
+        $result  = $service->getStreams('clientId', 'accessToken');
+
+        $this->assertEquals(['stream1', 'stream2'], $result);
     }
 }
