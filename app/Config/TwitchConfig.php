@@ -6,11 +6,11 @@ class TwitchConfig
 {
     public static function clientId()
     {
-        return config('services.twitch.client_id');
+        return $_ENV['TWITCH_CLIENT_ID'] ?? '';
     }
 
     public static function clientSecret()
     {
-        return config('services.twitch.client_secret');
+        return $_ENV['TWITCH_CLIENT_SECRET'] ?? '';
     }
 }
