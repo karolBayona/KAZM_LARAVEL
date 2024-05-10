@@ -6,13 +6,14 @@ use App\Infrastructure\Clients\APIClient;
 use App\Services\StreamsDataManager\GetStreamsService;
 use Illuminate\Http\Client\Response;
 use PHPUnit\Framework\MockObject\Exception;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class GetStreamsServiceTest extends TestCase
 {
-    private $apiClientMock;
-    private $responseMock;
-    private $service;
+    private MockObject|APIClient $apiClientMock;
+    private Response|MockObject $responseMock;
+    private GetStreamsService $service;
 
     /**
      * @throws Exception
