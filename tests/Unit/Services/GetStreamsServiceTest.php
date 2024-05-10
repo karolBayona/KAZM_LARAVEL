@@ -60,4 +60,29 @@ class GetStreamsServiceTest extends TestCase
         $service->getStreams('clientId', 'accessToken');
     }
 
+    /**
+     * @throws Exception
+     */
+    public function test_get_streams_unsuccessful_response_with_status_code_500()
+    {
+        $apiClientMock = $this->createMock(APIClient::class);
+        $responseMock  = $this->createMock(Response::class);
+
+        $apiClientMock->method('getDataForStreamsFromAPI')
+            ->willReturn($responseMock);
+
+        $responseMock->method('successful')
+            ->willReturn(false);
+
+        $responseMock->method('status')
+            ->willReturn(500);
+
+        $service = new GetStreamsService($apiClientMock);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('No se pueden devolver streams en este momento, inténtalo más tarde');
+
+        $service->getStreams('clientId', 'accessToken');
+    }
+
 }
