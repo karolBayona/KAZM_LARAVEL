@@ -2,45 +2,95 @@
 
 namespace Services;
 
-use App\Services\GetStreamsService;
-use Illuminate\Support\Facades\Http;
+use App\Infrastructure\Clients\APIClient;
+use App\Services\StreamsDataManager\GetStreamsService;
+use Illuminate\Http\Client\Response;
 use PHPUnit\Framework\MockObject\Exception;
-use Tests\TestCase;
+use PHPUnit\Framework\TestCase;
 
 class GetStreamsServiceTest extends TestCase
 {
+    private $apiClientMock;
+    private $responseMock;
+    private $service;
+
     /**
      * @throws Exception
      */
-    public function testExecuteGetStreams_ReturnsCorrectDataFromTwitchAPI()
+    protected function setUp(): void
     {
-        // Mocking dependencies
-        $tokenTwitchMock = $this->createMock(\App\Services\TokenTwitch::class);
-        $tokenTwitchMock->method('getToken')->willReturn('mocked_access_token');
+        $this->apiClientMock = $this->createMock(APIClient::class);
+        $this->responseMock  = $this->createMock(Response::class);
+        $this->service       = new GetStreamsService($this->apiClientMock);
+    }
 
-        // Mocking HTTP response
-        $streamsApiResponse = [
-            'data' => [
-                ['title' => 'Stream 1', 'user_name' => 'user1'],
-                ['title' => 'Stream 2', 'user_name' => 'user2'],
-            ]
-        ];
-        Http::fake([
-            'https://api.twitch.tv/helix/streams' => Http::response($streamsApiResponse, 200)
-        ]);
+    /**
+     * @throws \Exception
+     */
+    public function test_get_streams_successful_response_with_data()
+    {
+        $this->apiClientMock->method('getDataForStreamsFromAPI')
+            ->willReturn($this->responseMock);
 
-        // Create an instance of GetStreamsService with mocked dependencies
-        $service = new GetStreamsService($tokenTwitchMock);
+        $this->responseMock->method('successful')
+            ->willReturn(true);
 
-        // Call the method we want to test
-        $result = $service->executeGetStreams();
+        $this->responseMock->method('json')
+            ->willReturn(['data' => ['stream1', 'stream2']]);
 
-        // Assertions
-        $this->assertIsArray($result);
-        $this->assertCount(2, $result);
-        $this->assertEquals('Stream 1', $result[0]['title']);
-        $this->assertEquals('user1', $result[0]['user_name']);
-        $this->assertEquals('Stream 2', $result[1]['title']);
-        $this->assertEquals('user2', $result[1]['user_name']);
+        $result = $this->service->getStreams('clientId', 'accessToken');
+
+        $this->assertEquals(['stream1', 'stream2'], $result);
+    }
+
+    public function test_get_streams_successful_response_without_data()
+    {
+        $this->apiClientMock->method('getDataForStreamsFromAPI')
+            ->willReturn($this->responseMock);
+
+        $this->responseMock->method('successful')
+            ->willReturn(true);
+
+        $this->responseMock->method('json')
+            ->willReturn([]);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('No se encontraron datos de stream');
+
+        $this->service->getStreams('clientId', 'accessToken');
+    }
+
+    public function test_get_streams_unsuccessful_response_with_status_code_500()
+    {
+        $this->apiClientMock->method('getDataForStreamsFromAPI')
+            ->willReturn($this->responseMock);
+
+        $this->responseMock->method('successful')
+            ->willReturn(false);
+
+        $this->responseMock->method('status')
+            ->willReturn(500);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('No se pueden devolver streams en este momento, inténtalo más tarde');
+
+        $this->service->getStreams('clientId', 'accessToken');
+    }
+
+    public function test_get_streams_unsuccessful_response_with_non_500_status_code()
+    {
+        $this->apiClientMock->method('getDataForStreamsFromAPI')
+            ->willReturn($this->responseMock);
+
+        $this->responseMock->method('successful')
+            ->willReturn(false);
+
+        $this->responseMock->method('status')
+            ->willReturn(400);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('No se pudieron obtener los datos de los streams');
+
+        $this->service->getStreams('clientId', 'accessToken');
     }
 }
