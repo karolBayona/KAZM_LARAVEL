@@ -137,4 +137,22 @@ class GetUserServiceTest extends TestCase
 
         $this->service->getUser('clientId', 'accessToken', 1);
     }
+
+    /**
+     * @throws \Exception|Exception
+     */
+    public function test_get_user_with_api_response_status_not_500()
+    {
+        $this->apiClientMock->method('getDataForUserFromAPI')
+            ->willReturn($this->responseMock);
+        $this->responseMock->method('successful')
+            ->willReturn(false);
+        $this->responseMock->method('status')
+            ->willReturn(400);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('No se pudieron obtener los datos de los usuarios');
+
+        $this->service->getUser('clientId', 'accessToken', 1);
+    }
 }
