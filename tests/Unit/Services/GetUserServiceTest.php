@@ -31,7 +31,7 @@ class GetUserServiceTest extends TestCase
      * @throws Exception
      * @throws \Exception
      */
-    public function test_get_user_successful_response_with_data()
+    public function test_get_user_with_successful_response_and_valid_data()
     {
         $this->apiClientMock->method('getDataForUserFromAPI')
             ->willReturn($this->responseMock);
@@ -90,7 +90,7 @@ class GetUserServiceTest extends TestCase
     /**
      * @throws \Exception|Exception
      */
-    public function test_get_user_successful_response_without_data()
+    public function test_get_user_with_empty_user_data()
     {
         $this->apiClientMock->method('getDataForUserFromAPI')
             ->willReturn($this->responseMock);

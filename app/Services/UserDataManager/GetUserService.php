@@ -41,9 +41,11 @@ class GetUserService
         }
 
         $userData = $responseData['data'][0] ?? null;
-        if ($userData) {
-            $this->dbClient->updateOrCreateUserInDB($userData);
+        if (empty($userData)) {
+            throw new Exception('No se encontraron datos de usuario', 404);
         }
+
+        $this->dbClient->updateOrCreateUserInDB($userData);
 
         return $userData;
     }
