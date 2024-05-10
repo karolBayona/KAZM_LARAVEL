@@ -102,6 +102,8 @@ class GetUserServiceTest extends TestCase
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('No se encontraron datos de usuario');
 
+        $this->dbClientMock->expects($this->never())->method('updateOrCreateUserInDB');
+
         $this->service->getUser('clientId', 'accessToken', 1);
     }
 
