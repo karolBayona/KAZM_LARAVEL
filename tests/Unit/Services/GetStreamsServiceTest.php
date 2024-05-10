@@ -33,4 +33,31 @@ class GetStreamsServiceTest extends TestCase
 
         $this->assertEquals(['stream1', 'stream2'], $result);
     }
+
+    /**
+     * @throws Exception
+     * @throws \Exception
+     */
+    public function test_get_streams_successful_response_without_data()
+    {
+        $apiClientMock = $this->createMock(APIClient::class);
+        $responseMock  = $this->createMock(Response::class);
+
+        $apiClientMock->method('getDataForStreamsFromAPI')
+            ->willReturn($responseMock);
+
+        $responseMock->method('successful')
+            ->willReturn(true);
+
+        $responseMock->method('json')
+            ->willReturn([]);
+
+        $service = new GetStreamsService($apiClientMock);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('No se encontraron datos de stream');
+
+        $service->getStreams('clientId', 'accessToken');
+    }
+
 }
