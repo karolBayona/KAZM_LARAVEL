@@ -109,4 +109,45 @@ class GetUserServiceTest extends TestCase
 
         $service->getUser('clientId', 'accessToken', 1);
     }
+
+    /**
+     * @throws \Exception|Exception
+     */
+    public function test_get_user_successful_response_with_data_db_exception()
+    {
+        $apiClientMock = $this->createMock(APIClient::class);
+        $dbClientMock  = $this->createMock(DBClient::class);
+        $responseMock  = $this->createMock(Response::class);
+        $service       = new GetUserService($apiClientMock, $dbClientMock);
+
+        $apiClientMock->method('getDataForUserFromAPI')
+            ->willReturn($responseMock);
+
+        $responseMock->method('successful')
+            ->willReturn(true);
+
+        $responseMock->method('json')
+            ->willReturn(['data' => [
+                [
+                    'id'                => 1,
+                    'login'             => 'user1',
+                    'display_name'      => 'User 1',
+                    'type'              => 'type1',
+                    'broadcaster_type'  => 'broadcaster_type1',
+                    'description'       => 'description1',
+                    'profile_image_url' => 'profile_image_url1',
+                    'offline_image_url' => 'offline_image_url1',
+                    'view_count'        => 100,
+                    'created_at'        => '2022-01-01 00:00:00',
+                ]
+            ]]);
+
+        $dbClientMock->method('updateOrCreateUserInDB')
+            ->will($this->throwException(new \Exception('Error al actualizar o crear usuario en DB')));
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Error al actualizar o crear usuario en DB');
+
+        $service->getUser('clientId', 'accessToken', 1);
+    }
 }
