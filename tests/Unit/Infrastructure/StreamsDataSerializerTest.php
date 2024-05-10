@@ -1,7 +1,9 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
+namespace Infrastructure;
+
 use App\Infrastructure\Serializers\StreamsDataSerializer;
+use PHPUnit\Framework\TestCase;
 
 class StreamsDataSerializerTest extends TestCase
 {
