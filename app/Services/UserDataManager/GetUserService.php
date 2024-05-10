@@ -4,6 +4,7 @@ namespace App\Services\UserDataManager;
 
 use App\Infrastructure\Clients\APIClient;
 use App\Infrastructure\Clients\DBClient;
+use Exception;
 
 /**
  * @SuppressWarnings(PHPMD.StaticAccess)
@@ -20,6 +21,9 @@ class GetUserService
         $this->dbClient  = $dbClient;
     }
 
+    /**
+     * @throws Exception
+     */
     public function getUser(string $clientId, string $accessToken, int $userID)
     {
         $response = $this->apiClient->getDataForUserFromAPI($clientId, $accessToken, $userID);
@@ -32,15 +36,18 @@ class GetUserService
         }
 
         $responseData = $response->json();
-        if (!isset($responseData['data'])) {
+        if (empty($responseData['data'])) {
             throw new Exception('No se encontraron datos de usuario', 404);
         }
 
         $userData = $responseData['data'][0] ?? null;
-        if ($userData) {
-            $this->dbClient->updateOrCreateUserInDB($userData);
+        if (empty($userData)) {
+            throw new Exception('No se encontraron datos de usuario', 404);
         }
+
+        $this->dbClient->updateOrCreateUserInDB($userData);
 
         return $userData;
     }
+
 }
