@@ -4,6 +4,7 @@ namespace App\Services\UserDataManager;
 
 use App\Infrastructure\Clients\APIClient;
 use App\Infrastructure\Clients\DBClient;
+use Exception;
 
 /**
  * @SuppressWarnings(PHPMD.StaticAccess)

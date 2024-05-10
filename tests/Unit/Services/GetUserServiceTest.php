@@ -13,6 +13,7 @@ class GetUserServiceTest extends TestCase
 {
     /**
      * @throws Exception
+     * @throws \Exception
      */
     public function test_get_user_successful_response_with_data()
     {
@@ -59,5 +60,28 @@ class GetUserServiceTest extends TestCase
         ], $result);
     }
 
-    
+    /**
+     * @throws \Exception|Exception
+     */
+    public function test_get_user_unsuccessful_response()
+    {
+        $apiClientMock = $this->createMock(APIClient::class);
+        $dbClientMock  = $this->createMock(DBClient::class);
+        $responseMock  = $this->createMock(Response::class);
+        $service       = new GetUserService($apiClientMock, $dbClientMock);
+
+        $apiClientMock->method('getDataForUserFromAPI')
+            ->willReturn($responseMock);
+
+        $responseMock->method('successful')
+            ->willReturn(false);
+
+        $responseMock->method('status')
+            ->willReturn(500);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('No se pueden devolver usuarios en este momento, inténtalo más tarde');
+
+        $service->getUser('clientId', 'accessToken', 1);
+    }
 }
