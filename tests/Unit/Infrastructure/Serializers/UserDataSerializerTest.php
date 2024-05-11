@@ -1,11 +1,14 @@
 <?php
 
-namespace Infrastructure;
+namespace Tests\Unit\Infrastructure\Serializers;
 
 use App\Infrastructure\Serializers\UserDataSerializer;
 use Carbon\Carbon;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.StaticAccess)
+ */
 class UserDataSerializerTest extends TestCase
 {
     protected array $userData;
@@ -50,12 +53,12 @@ class UserDataSerializerTest extends TestCase
 
     public function test_streams_serializable_with_missing_data()
     {
-        $userDataWithMissingFields = [
+        $userDataWithMissing = [
             'id'    => 123,
             'login' => 'john_doe',
         ];
 
-        $serializedData = UserDataSerializer::serialize($userDataWithMissingFields);
+        $serializedData = UserDataSerializer::serialize($userDataWithMissing);
 
         $expectedData = [
             'id'                => 123,

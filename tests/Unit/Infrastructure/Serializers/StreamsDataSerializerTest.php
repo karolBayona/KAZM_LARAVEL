@@ -1,9 +1,13 @@
 <?php
 
-namespace Infrastructure;
+namespace Tests\Unit\Infrastructure\Serializers;
 
 use App\Infrastructure\Serializers\StreamsDataSerializer;
 use PHPUnit\Framework\TestCase;
+
+/**
+ * @SuppressWarnings(PHPMD.StaticAccess)
+ */
 
 class StreamsDataSerializerTest extends TestCase
 {
@@ -29,7 +33,7 @@ class StreamsDataSerializerTest extends TestCase
 
     public function test_streams_serializable_with_missing_data()
     {
-        $streamDataWithMissingFields = [
+        $streamDataMissing = [
             ['title' => 'Stream 1'],
             ['user_name' => 'user2'],
             ['title'     => 'Stream 3', 'user_name' => 'user3'],
@@ -41,7 +45,7 @@ class StreamsDataSerializerTest extends TestCase
             ['title' => 'Stream 3', 'user_name' => 'user3'],
         ];
 
-        $serializedData = StreamsDataSerializer::serialize($streamDataWithMissingFields);
+        $serializedData = StreamsDataSerializer::serialize($streamDataMissing);
 
         $this->assertEquals($expectedData, $serializedData);
     }

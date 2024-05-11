@@ -4,6 +4,10 @@ namespace App\Infrastructure\Clients;
 
 use Illuminate\Support\Facades\Http;
 
+/**
+ * @SuppressWarnings(PHPMD.StaticAccess)
+ */
+
 class APIClient
 {
     public function getNewTokenFromApi(mixed $clientID, mixed $clientSecret): \Illuminate\Http\Client\Response|\GuzzleHttp\Promise\PromiseInterface

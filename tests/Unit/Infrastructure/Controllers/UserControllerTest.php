@@ -1,18 +1,25 @@
 <?php
 
-namespace Infrastructure;
+namespace Tests\Unit\Infrastructure\Controllers;
 
-use Tests\TestCase;
 use App\Infrastructure\Controllers\UserController;
-use Illuminate\Http\JsonResponse;
 use App\Services\UserDataManager\UserDataProvider;
-use Illuminate\Http\Request;
 use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Mockery;
+use Tests\TestCase;
+
+/**
+ * @SuppressWarnings(PHPMD.StaticAccess)
+ */
 
 class UserControllerTest extends TestCase
 {
-    protected (Mockery\MockInterface&Mockery\LegacyMockInterface)|UserDataProvider $userDataProvider;
+    /**
+     * @var Mockery\MockInterface|UserDataProvider
+     */
+    protected UserDataProvider|Mockery\MockInterface $userDataProvider;
     protected UserController $controller;
     protected Request $request;
 
