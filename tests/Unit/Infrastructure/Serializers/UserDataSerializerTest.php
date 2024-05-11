@@ -31,7 +31,7 @@ class UserDataSerializerTest extends TestCase
         ];
     }
 
-    public function test_users_serialize_with_complete_data()
+    public function test_serialization_preserves_complete_data()
     {
         $serializedData = UserDataSerializer::serialize($this->userData);
 
@@ -51,15 +51,12 @@ class UserDataSerializerTest extends TestCase
         $this->assertEquals($expectedData, $serializedData);
     }
 
-    public function test_streams_serializable_with_missing_data()
+    public function test_serialization_fills_missing_data_with_null()
     {
         $userDataWithMissing = [
             'id'    => 123,
             'login' => 'john_doe',
         ];
-
-        $serializedData = UserDataSerializer::serialize($userDataWithMissing);
-
         $expectedData = [
             'id'                => 123,
             'username'          => 'john_doe',
@@ -72,6 +69,8 @@ class UserDataSerializerTest extends TestCase
             'view_count'        => 0,
             'created_at'        => null,
         ];
+
+        $serializedData = UserDataSerializer::serialize($userDataWithMissing);
 
         $this->assertEquals($expectedData, $serializedData);
     }
