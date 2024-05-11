@@ -2,43 +2,44 @@
 
 namespace Services;
 
+use PHPUnit\Framework\TestCase;
 use App\Infrastructure\Clients\APIClient;
 use App\Infrastructure\Clients\DBClient;
+use App\Models\UsersTwitch;
 use App\Services\UserDataManager\GetUserService;
 use Illuminate\Http\Client\Response;
-use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
+use Exception;
 
 class GetUserServiceTest extends TestCase
 {
-    private MockObject|APIClient $apiClientMock;
-    private MockObject|DBClient $dbClientMock;
-    private Response|MockObject $responseMock;
-    private GetUserService $service;
+    private MockObject|APIClient $apiClient;
+    private MockObject|DBClient $dbClient;
+    private Response|MockObject $response;
+    private GetUserService $getUserService;
 
     /**
-     * @throws Exception
+     * @throws Exception|\PHPUnit\Framework\MockObject\Exception
      */
     protected function setUp(): void
     {
-        $this->apiClientMock = $this->createMock(APIClient::class);
-        $this->dbClientMock  = $this->createMock(DBClient::class);
-        $this->responseMock  = $this->createMock(Response::class);
-        $this->service       = new GetUserService($this->apiClientMock, $this->dbClientMock);
+        $this->apiClient = $this->createMock(APIClient::class);
+        $this->dbClient  = $this->createMock(DBClient::class);
+        $this->response  = $this->createMock(Response::class);
+        $this->getUserService       = new GetUserService($this->apiClient, $this->dbClient);
     }
 
     /**
      * @throws Exception
-     * @throws \Exception
+     * @throws Exception
      */
-    public function test_get_user_with_successful_response_and_valid_data()
+    public function test_returns_correct_data_when_api_response_is_successful()
     {
-        $this->apiClientMock->method('getDataForUserFromAPI')
-            ->willReturn($this->responseMock);
-        $this->responseMock->method('successful')
+        $this->apiClient->method('getDataForUserFromAPI')
+            ->willReturn($this->response);
+        $this->response->method('successful')
             ->willReturn(true);
-        $this->responseMock->method('json')
+        $this->response->method('json')
             ->willReturn(['data' => [
                 [
                     'id'                => 1,
@@ -54,7 +55,7 @@ class GetUserServiceTest extends TestCase
                 ]
             ]]);
 
-        $result = $this->service->getUser('clientId', 'accessToken', 1);
+        $result = $this->getUserService->getUser('clientId', 'accessToken', 1);
 
         $this->assertEquals([
             'id'                => 1,
@@ -71,53 +72,50 @@ class GetUserServiceTest extends TestCase
     }
 
     /**
-     * @throws \Exception|Exception
+     * @throws Exception|Exception
      */
-    public function test_get_user_unsuccessful_response()
+    public function test_throws_exception_when_api_response_is_unsuccessful()
     {
-        $this->apiClientMock->method('getDataForUserFromAPI')
-            ->willReturn($this->responseMock);
-        $this->responseMock->method('successful')
+        $this->apiClient->method('getDataForUserFromAPI')
+            ->willReturn($this->response);
+        $this->response->method('successful')
             ->willReturn(false);
-        $this->responseMock->method('status')
+        $this->response->method('status')
             ->willReturn(500);
-
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('No se pueden devolver usuarios en este momento, inténtalo más tarde');
 
-        $this->service->getUser('clientId', 'accessToken', 1);
+        $this->getUserService->getUser('clientId', 'accessToken', 1);
     }
 
     /**
-     * @throws \Exception|Exception
+     * @throws Exception|Exception
      */
-    public function test_get_user_with_empty_user_data()
+    public function test_throws_exception_when_api_response_contains_no_user_data()
     {
-        $this->apiClientMock->method('getDataForUserFromAPI')
-            ->willReturn($this->responseMock);
-        $this->responseMock->method('successful')
+        $this->apiClient->method('getDataForUserFromAPI')
+            ->willReturn($this->response);
+        $this->response->method('successful')
             ->willReturn(true);
-        $this->responseMock->method('json')
+        $this->response->method('json')
             ->willReturn(['data' => []]);
-
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('No se encontraron datos de usuario');
+        $this->dbClient->expects($this->never())->method('updateOrCreateUserInDB');
 
-        $this->dbClientMock->expects($this->never())->method('updateOrCreateUserInDB');
-
-        $this->service->getUser('clientId', 'accessToken', 1);
+        $this->getUserService->getUser('clientId', 'accessToken', 1);
     }
 
     /**
-     * @throws \Exception|Exception
+     * @throws Exception|Exception
      */
-    public function test_get_user_successful_response_with_data_db_exception()
+    public function test_throws_exception_on_db_update_failure()
     {
-        $this->apiClientMock->method('getDataForUserFromAPI')
-            ->willReturn($this->responseMock);
-        $this->responseMock->method('successful')
+        $this->apiClient->method('getDataForUserFromAPI')
+            ->willReturn($this->response);
+        $this->response->method('successful')
             ->willReturn(true);
-        $this->responseMock->method('json')
+        $this->response->method('json')
             ->willReturn(['data' => [
                 [
                     'id'                => 1,
@@ -132,30 +130,91 @@ class GetUserServiceTest extends TestCase
                     'created_at'        => '2022-01-01 00:00:00',
                 ]
             ]]);
-        $this->dbClientMock->method('updateOrCreateUserInDB')
-            ->will($this->throwException(new \Exception('Error al actualizar o crear usuario en DB')));
-
-        $this->expectException(\Exception::class);
+        $this->dbClient->method('updateOrCreateUserInDB')
+            ->will($this->throwException(new Exception('Error al actualizar o crear usuario en DB')));
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('Error al actualizar o crear usuario en DB');
 
-        $this->service->getUser('clientId', 'accessToken', 1);
+        $this->getUserService->getUser('clientId', 'accessToken', 1);
     }
 
     /**
-     * @throws \Exception|Exception
+     * @throws Exception|Exception
      */
-    public function test_get_user_with_api_response_status_not_500()
+    public function test_throws_exception_with_api_response_is_unsuccessful_with_non_500_status()
     {
-        $this->apiClientMock->method('getDataForUserFromAPI')
-            ->willReturn($this->responseMock);
-        $this->responseMock->method('successful')
+        $this->apiClient->method('getDataForUserFromAPI')
+            ->willReturn($this->response);
+        $this->response->method('successful')
             ->willReturn(false);
-        $this->responseMock->method('status')
+        $this->response->method('status')
             ->willReturn(400);
-
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('No se pudieron obtener los datos de los usuarios');
 
-        $this->service->getUser('clientId', 'accessToken', 1);
+        $this->getUserService->getUser('clientId', 'accessToken', 1);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function test_get_user_retrieves_data_from_database_if_present()
+    {
+        $expectedUserData = [
+            'id'                => 1,
+            'login'             => 'user1',
+            'display_name'      => 'User 1',
+            'type'              => 'type1',
+            'broadcaster_type'  => 'broadcaster_type1',
+            'description'       => 'description1',
+            'profile_image_url' => 'profile_image_url1',
+            'offline_image_url' => 'offline_image_url1',
+            'view_count'        => 100,
+            'created_at'        => '2022-01-01 00:00:00',
+        ];
+        $this->dbClient->method('getUserFromDB')
+            ->willReturn(new UsersTwitch($expectedUserData));
+
+        $this->apiClient->expects($this->never())
+            ->method('getDataForUserFromAPI');
+
+        $result = $this->getUserService->getUser('clientId', 'accessToken', 1);
+
+        $this->assertEquals($expectedUserData, $result);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function test_get_user_fetches_from_api_and_updates_db_if_not_in_database()
+    {
+        $userDataFromAPI = [
+            'id'                => 2,
+            'login'             => 'user2',
+            'display_name'      => 'User 2',
+            'type'              => 'type2',
+            'broadcaster_type'  => 'broadcaster_type2',
+            'description'       => 'description2',
+            'profile_image_url' => 'profile_image_url2',
+            'offline_image_url' => 'offline_image_url2',
+            'view_count'        => 200,
+            'created_at'        => '2022-02-02 00:00:00',
+        ];
+        $this->dbClient->method('getUserFromDB')
+            ->willReturn(null);
+        $this->response->method('successful')
+            ->willReturn(true);
+        $this->response->method('json')
+            ->willReturn(['data' => [$userDataFromAPI]]);
+        $this->apiClient->method('getDataForUserFromAPI')
+            ->willReturn($this->response);
+        $this->dbClient->expects($this->once())
+            ->method('updateOrCreateUserInDB')
+            ->with($this->equalTo($userDataFromAPI))
+            ->willReturn(new UsersTwitch($userDataFromAPI));
+
+        $result = $this->getUserService->getUser('clientId', 'accessToken', 2);
+
+        $this->assertEquals($userDataFromAPI, $result);
     }
 }

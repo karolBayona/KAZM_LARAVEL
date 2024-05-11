@@ -9,7 +9,6 @@ use Exception;
 /**
  * @SuppressWarnings(PHPMD.StaticAccess)
  */
-
 class GetUserService
 {
     private APIClient $apiClient;
@@ -24,10 +23,15 @@ class GetUserService
     /**
      * @throws Exception
      */
-    public function getUser(string $clientId, string $accessToken, int $userID)
+    public function getUser(string $clientId, string $accessToken, int $userID): array
     {
-        $response = $this->apiClient->getDataForUserFromAPI($clientId, $accessToken, $userID);
+        $userData = $this->dbClient->getUserFromDB($userID);
 
+        if (!empty($userData)) {
+            return $userData->toArray();
+        }
+
+        $response = $this->apiClient->getDataForUserFromAPI($clientId, $accessToken, $userID);
         if (!$response->successful()) {
             if ($response->status() == 500) {
                 throw new Exception('No se pueden devolver usuarios en este momento, inténtalo más tarde', 503);
@@ -49,5 +53,4 @@ class GetUserService
 
         return $userData;
     }
-
 }

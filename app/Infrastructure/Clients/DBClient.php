@@ -21,7 +21,7 @@ class DBClient
         return Token::latest('created_at')->first();
     }
 
-    public function setTokenDB($newToken)
+    public function setTokenDB($newToken): void
     {
         Token::create(['token' => $newToken,]);
     }
@@ -42,5 +42,10 @@ class DBClient
                 'created_at'        => Carbon::parse($userData['created_at'])->toDateTimeString(),
             ]
         );
+    }
+
+    public function getUserFromDB(int $userId): ?UsersTwitch
+    {
+        return UsersTwitch::find($userId);
     }
 }
