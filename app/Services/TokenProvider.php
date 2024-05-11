@@ -12,40 +12,25 @@ use Exception;
  */
 class TokenProvider
 {
-    private mixed $clientID;
-    private mixed $clientSecret;
+    private string $clientID;
+    private string $clientSecret;
     private APIClient $clientAPI;
     private DBClient $clientDB;
 
-    public function __construct()
+    public function __construct(TwitchConfig $config, APIClient $clientAPI, DBClient $clientDB)
     {
-        $this->clientID     = TwitchConfig::clientId();
-        $this->clientSecret = TwitchConfig::clientSecret();
+        $this->clientID     = $config->clientId();
+        $this->clientSecret = $config->clientSecret();
 
-        $this->clientAPI = new APIClient();
-        $this->clientDB  = new DBClient();
-    }
-
-    /**
-     * @param APIClient $clientAPI
-     */
-    public function setAPIClient(APIClient $clientAPI): void
-    {
         $this->clientAPI = $clientAPI;
+        $this->clientDB  = $clientDB;
     }
 
     /**
-     * @param DBClient $clientDB
-     */
-    public function setDBClient(DBClient $clientDB): void
-    {
-        $this->clientDB = $clientDB;
-    }
-
-    /**
+     * @return string
      * @throws Exception
      */
-    public function getToken()
+    public function getToken(): string
     {
         $accessToken = $this->clientDB->getTokenDB();
         if ($accessToken) {
@@ -55,9 +40,10 @@ class TokenProvider
     }
 
     /**
+     * @return string
      * @throws Exception
      */
-    private function fetchTokenFromApi()
+    private function fetchTokenFromApi(): string
     {
         $response = $this->clientAPI->getNewTokenFromApi($this->clientID, $this->clientSecret);
         if (!$response->successful()) {
@@ -72,4 +58,5 @@ class TokenProvider
         $this->clientDB->setTokenDB($newToken);
         return $newToken;
     }
+
 }

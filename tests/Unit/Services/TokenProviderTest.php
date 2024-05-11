@@ -19,22 +19,19 @@ class TokenProviderTest extends TestCase
     private DBClient $dbClient;
     private TokenProvider $tokenProvider;
 
+    /**
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     */
     protected function setUp(): void
     {
-        $_ENV['TWITCH_CLIENT_ID']     = TwitchConfig::clientId();
-        $_ENV['TWITCH_CLIENT_SECRET'] = TwitchConfig::clientSecret();
+        $this->apiClient = $this->createMock(APIClient::class);
+        $this->dbClient  = $this->createMock(DBClient::class);
 
-        $this->apiClient = $this->getMockBuilder(APIClient::class)
-            ->onlyMethods(['getNewTokenFromApi'])
-            ->getMock();
+        $this->twitchConfig = $this->createMock(TwitchConfig::class);
+        $this->twitchConfig->method('clientId')->willReturn('test_client_id');
+        $this->twitchConfig->method('clientSecret')->willReturn('test_client_secret');
 
-        $this->dbClient = $this->getMockBuilder(DBClient::class)
-            ->onlyMethods(['getTokenDB', 'setTokenDB'])
-            ->getMock();
-
-        $this->tokenProvider = new TokenProvider();
-        $this->tokenProvider->setAPIClient($this->apiClient);
-        $this->tokenProvider->setDBClient($this->dbClient);
+        $this->tokenProvider = new TokenProvider($this->twitchConfig, $this->apiClient, $this->dbClient);
     }
 
     /**
@@ -45,7 +42,10 @@ class TokenProviderTest extends TestCase
     {
         $responseMock = $this->createMock(Response::class);
         $responseMock->method('successful')->willReturn(true);
-        $responseMock->method('json')->willReturn(['access_token' => 'newToken']);
+        $responseMock->expects($this->once())
+            ->method('json')
+            ->with('access_token')
+            ->willReturn('newToken');
         $this->apiClient->expects($this->once())
             ->method('getNewTokenFromApi')
             ->willReturn($responseMock);
