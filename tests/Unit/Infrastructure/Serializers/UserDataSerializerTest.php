@@ -57,9 +57,6 @@ class UserDataSerializerTest extends TestCase
             'id'    => 123,
             'login' => 'john_doe',
         ];
-
-        $serializedData = UserDataSerializer::serialize($userDataWithMissing);
-
         $expectedData = [
             'id'                => 123,
             'username'          => 'john_doe',
@@ -72,6 +69,8 @@ class UserDataSerializerTest extends TestCase
             'view_count'        => 0,
             'created_at'        => null,
         ];
+
+        $serializedData = UserDataSerializer::serialize($userDataWithMissing);
 
         $this->assertEquals($expectedData, $serializedData);
     }
