@@ -10,6 +10,9 @@ use App\Infrastructure\Clients\APIClient;
 use App\Infrastructure\Clients\DBClient;
 use Exception;
 
+/**
+ * @SuppressWarnings(PHPMD.StaticAccess)
+ */
 class TokenProviderTest extends TestCase
 {
     private APIClient $apiClient;
