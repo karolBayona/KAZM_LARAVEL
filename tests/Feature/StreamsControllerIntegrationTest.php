@@ -23,7 +23,7 @@ class StreamsControllerIntegrationTest extends TestCase
         $this->streamsDataProvider = $this->mock(StreamsDataProvider::class);
     }
 
-    private function getResponse(): TestResponse
+    private function makeGetRequest(): TestResponse
     {
         return $this->get('/analytics/streams');
     }
@@ -32,7 +32,7 @@ class StreamsControllerIntegrationTest extends TestCase
     {
         $this->streamsDataProvider->shouldReceive('execute')->andReturn(new JsonResponse(['data' => 'example'], 200));
 
-        $response = $this->getResponse();
+        $response = $this->makeGetRequest();
 
         $response->assertStatus(200);
         $response->assertHeader('Content-Type', 'application/json');
@@ -42,7 +42,7 @@ class StreamsControllerIntegrationTest extends TestCase
     {
         $this->streamsDataProvider->shouldReceive('execute')->andThrow(new Exception('Test exception', 404));
 
-        $response = $this->getResponse();
+        $response = $this->makeGetRequest();
 
         $response->assertStatus(404);
         $response->assertExactJson(['error' => 'Datos de stream no encontrados.']);
@@ -52,7 +52,7 @@ class StreamsControllerIntegrationTest extends TestCase
     {
         $this->streamsDataProvider->shouldReceive('execute')->andThrow(new Exception('Servicio no disponible. Por favor, inténtelo más tarde.', 503));
 
-        $response = $this->getResponse();
+        $response = $this->makeGetRequest();
 
         $response->assertStatus(503);
         $response->assertExactJson(['error' => 'Servicio no disponible. Por favor, inténtelo más tarde.']);
