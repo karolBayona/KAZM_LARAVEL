@@ -24,21 +24,20 @@ class StreamsDataSerializerTest extends TestCase
         ];
     }
 
-    public function test_streams_serialize_with_complete_data()
+    public function test_serialization_preserves_complete_data()
     {
         $serializedData = StreamsDataSerializer::serialize($this->streamData);
 
         $this->assertEquals($this->streamData, $serializedData);
     }
 
-    public function test_streams_serializable_with_missing_data()
+    public function test_serialization_fills_missing_data_with_null()
     {
         $streamDataMissing = [
             ['title' => 'Stream 1'],
             ['user_name' => 'user2'],
             ['title'     => 'Stream 3', 'user_name' => 'user3'],
         ];
-
         $expectedData = [
             ['title' => 'Stream 1', 'user_name' => null],
             ['title' => null, 'user_name' => 'user2'],
