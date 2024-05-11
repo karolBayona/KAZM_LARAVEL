@@ -64,12 +64,11 @@ class UserControllerTest extends TestCase
     public function test_returns_service_unavailable_when_data_provider_fails()
     {
         $this->userDataProvider->shouldReceive('execute')->andThrow(new Exception('Service unavailable', 503));
+        $expectedError = 'Servicio no disponible. Por favor, inténtelo más tarde.';
 
         $response = $this->userController->__invoke($this->request);
 
-        $expectedError = 'Servicio no disponible. Por favor, inténtelo más tarde.';
         $actualError   = json_decode($response->getContent(), true)['error'];
-
         $this->assertEquals(503, $response->getStatusCode());
         $this->assertMatchesRegularExpression("/$expectedError/", $actualError);
     }
