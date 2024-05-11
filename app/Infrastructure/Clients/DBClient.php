@@ -6,6 +6,10 @@ use App\Models\Token;
 use App\Models\UsersTwitch;
 use Illuminate\Support\Carbon;
 
+/**
+ * @SuppressWarnings(PHPMD.StaticAccess)
+ */
+
 class DBClient
 {
     public function __construct()
