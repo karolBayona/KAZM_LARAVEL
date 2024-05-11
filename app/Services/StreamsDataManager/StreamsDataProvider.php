@@ -16,21 +16,24 @@ use Illuminate\Http\JsonResponse;
 class StreamsDataProvider
 {
     private TokenProvider $tokenProvider;
-    private GetStreamsService $streamsManager;
+    public GetStreamsService $streamsManager;
+    private TwitchConfig $twitchConfig;
 
-    public function __construct(TokenProvider $tokenProvider, APIClient $apiClient)
+    public function __construct(TokenProvider $tokenProvider, APIClient $apiClient, TwitchConfig $twitchConfig)
     {
         $this->tokenProvider  = $tokenProvider;
+        $this->twitchConfig   = $twitchConfig;
         $this->streamsManager = new GetStreamsService($apiClient);
     }
 
     /**
+     * @return JsonResponse
      * @throws Exception
      */
     public function execute(): JsonResponse
     {
         $accessToken = $this->tokenProvider->getToken();
-        $clientId    = TwitchConfig::clientId();
+        $clientId    = $this->twitchConfig->clientId();
 
         $data = $this->streamsManager->getStreams($clientId, $accessToken);
 
