@@ -2,48 +2,45 @@
 
 namespace App\Infrastructure\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Services\Top_games;
 use App\Services\Top_videos;
 use App\Services\Topofthetops_BBDD;
 
+/**
+ * @SuppressWarnings(PHPMD.StaticAccess)
+ */
 class Topofthetops
 {
-    public function getTopOfTheTops(Request $request)
+    public function getTopOfTheTops(Request $request): JsonResponse
     {
-        // Recuperar el parámetro 'since' de la URL
-        $since = $request->input('since', 600); // 600 segundos (10 minutos) por defecto
+        $since = $request->input('since', 600); // Default to 600 seconds (10 minutes)
 
-        // Actualizar los juegos top en la base de datos
         Top_games::updateTopGames();
-
-        // Verificar si la tabla 'topofthetops' está vacía
         $tableIsEmpty = DB::table('topofthetops')->count() == 0;
 
-        // Consultar la tabla 'top_games' para obtener los IDs de los juegos top
         $topGames = DB::table('top_games')->select('game_id')->get();
 
         foreach ($topGames as $game) {
-            $gameId = $game->game_id;
+            $gameId       = $game->game_id;
+            $shouldUpdate = $tableIsEmpty; // Assume update if table is initially empty
 
-            if ($tableIsEmpty) {
-                // La tabla está vacía, forzar actualización
-                $this->updateGameData($gameId);
-            } else {
-                // Verificar si ya existen datos actualizados para este juego en 'topofthetops'
+            if (!$shouldUpdate) { // Check only if table isn't empty
                 $lastUpdatedAt = DB::table('topofthetops')
                     ->where('game_id', $gameId)
                     ->selectRaw('TIMESTAMPDIFF(SECOND, last_updated_at, NOW()) AS diff')
                     ->value('diff');
 
-                if ($lastUpdatedAt === null || $lastUpdatedAt > $since) {
-                    $this->updateGameData($gameId);
-                }
+                $shouldUpdate = $lastUpdatedAt === null || $lastUpdatedAt > $since;
+            }
+
+            if ($shouldUpdate) {
+                $this->updateGameData($gameId);
             }
         }
 
-        // Obtener y devolver los datos actualizados de 'topofthetops'
         $data = DB::table('topofthetops as tt')
             ->join('top_games as tg', 'tt.game_id', '=', 'tg.game_id')
             ->select('tt.game_id', 'tt.game_name', 'tt.user_name', 'tt.total_videos', 'tt.total_views', 'tt.most_viewed_title', 'tt.most_viewed_views', 'tt.most_viewed_duration', 'tt.most_viewed_created_at')
@@ -52,13 +49,9 @@ class Topofthetops
         return response()->json($data, 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 
-    // Función para actualizar los datos de un juego específico
-    private function updateGameData($gameId)
+    private function updateGameData($gameId): void
     {
-        // Actualizar los videos más vistos del juego
         Top_videos::updateTopVideos($gameId);
-
-        // Actualizar los datos en 'topofthetops'
         Topofthetops_BBDD::updateTopOfTheTops($gameId);
     }
 }
