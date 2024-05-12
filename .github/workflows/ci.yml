@@ -25,6 +25,10 @@ jobs:
       - name: Install dependencies
         run: composer install
 
+      - name: Run GRUMPHP
+        run: |
+          ./vendor/bin/grumphp run
+
       - name: Run Unit Tests
         run: |
           ./vendor/bin/phpunit --testsuite Unit
@@ -33,7 +37,4 @@ jobs:
         run: |
           ./vendor/bin/phpunit --testsuite Feature
 
-      - name: Run GRUMPHP
-        run: |
-          ./vendor/bin/grumphp run
 
