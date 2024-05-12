@@ -9,43 +9,41 @@ class Top_games
 {
     public static function updateTopGames()
     {
-
-        // Parámetros de la API de Twitch
+        // API parameters
         $client_id = 'ry2x90s1y7srrwh89y6twcxfz0gi8u';
-        $token = 's1q53moenjf7gigkq4lhkvw9mvfkmo';
+        $token     = 's1q53moenjf7gigkq4lhkvw9mvfkmo';
 
-        // URL de la API de Twitch para obtener el top de juegos, incluyendo el parámetro 'first' para limitar a 3 juegos
+        // Twitch API URL to fetch top games, limited to 3 games
         $url = 'https://api.twitch.tv/helix/games/top?first=3';
 
-        // Configuración del contexto para la solicitud HTTP
+        // HTTP request setup
         $response = Http::withHeaders([
-            'Client-ID' => $client_id,
+            'Client-ID'     => $client_id,
             'Authorization' => 'Bearer ' . $token,
         ])->get($url);
 
-        // Decodificar la respuesta JSON
+        // Decode JSON response
         $data = $response->json();
 
-        // Verificar si la respuesta contiene datos
-        if (isset($data['data']) && !empty($data['data'])) {
-
-            DB::table('top_games')->truncate();
-
-            // Insertar o actualizar juegos en la base de datos
-            foreach ($data['data'] as $game) {
-
-                $game_id = $game['id'];
-                $game_name = $game['name'];
-
-                DB::table('top_games')->updateOrInsert(
-                    ['game_id' => $game_id],
-                    ['game_name' => $game_name]
-                );
-            }
-            return "Datos actualizados exitosamente.";
-        } else {
-
-            return "No se encontraron datos en la respuesta de la API de Twitch.";
+        // Check if the response contains data
+        if (empty($data['data'])) {
+            return 'No se encontraron datos en la respuesta de la API de Twitch.';
         }
+
+        // Truncate the existing data in the table to refresh it
+        DB::table('top_games')->truncate();
+
+        // Insert or update games in the database
+        foreach ($data['data'] as $game) {
+            $game_id   = $game['id'];
+            $game_name = $game['name'];
+
+            DB::table('top_games')->updateOrInsert(
+                ['game_id' => $game_id],
+                ['game_name' => $game_name]
+            );
+        }
+
+        return 'Datos actualizados exitosamente.';
     }
 }
