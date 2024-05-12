@@ -20,12 +20,12 @@ class Token extends Model
 
     // Desactiva las marcas de tiempo 'updated_at', pero mantiene 'created_at'.
     // No es necesario si solo quieres evitar el error por falta de 'updated_at', pero se incluye por completitud.
-    public $timestamps = true;
-    const UPDATED_AT = null;
+    public $timestamps      = true;
+    public const null UPDATED_AT = null;
 
     // Especifica los atributos que pueden ser asignados masivamente.
     protected $fillable = ['token'];
 
     // Aunque no es estrictamente necesario, puedes especificar que 'created_at' se maneje como instancia de Carbon.
-    protected $dates = ['created_at'];
+    protected array $dates = ['created_at'];
 }

@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class UsersTwitch extends Model
 {
-    protected $table = 'usersTwitch';
+    protected $table      = 'usersTwitch';
     protected $primaryKey = 'id';
-    public $incrementing = false;
-    public $timestamps = false;
+    public $incrementing  = false;
+    public $timestamps    = false;
 
     protected $fillable = [
         'id', 'login', 'display_name', 'type', 'broadcaster_type',
