@@ -12,14 +12,14 @@ use Exception;
  */
 class TokenProvider
 {
-    private string $clientId;
+    private string $clientID;
     private string $clientSecret;
     private APIClient $clientAPI;
     private DBClient $clientDB;
 
     public function __construct(TwitchConfig $config, APIClient $clientAPI, DBClient $clientDB)
     {
-        $this->clientId     = $config->clientId();
+        $this->clientID     = $config->clientId();
         $this->clientSecret = $config->clientSecret();
 
         $this->clientAPI = $clientAPI;
@@ -45,7 +45,7 @@ class TokenProvider
      */
     private function fetchTokenFromApi(): string
     {
-        $response = $this->clientAPI->getNewTokenFromApi($this->clientId, $this->clientSecret);
+        $response = $this->clientAPI->getNewTokenFromApi($this->clientID, $this->clientSecret);
         if (!$response->successful()) {
             throw new Exception('No se puede establecer conexión con Twitch en este momento', 503);
         }
