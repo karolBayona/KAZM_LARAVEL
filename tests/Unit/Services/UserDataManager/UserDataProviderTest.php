@@ -1,6 +1,6 @@
 <?php
 
-namespace Services;
+namespace Services\UserDataManager;
 
 use App\Config\TwitchConfig;
 use App\Infrastructure\Clients\APIClient;
@@ -9,12 +9,12 @@ use App\Infrastructure\Serializers\UserDataSerializer;
 use App\Models\UsersTwitch;
 use App\Services\TokenProvider;
 use App\Services\UserDataManager\UserDataProvider;
-use Illuminate\Http\Client\Response;
+use Exception;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
+use Illuminate\Http\Client\Response;
 use Illuminate\Http\JsonResponse;
 use Mockery;
 use Tests\TestCase;
-use Exception;
 
 /**
  * @SuppressWarnings(PHPMD.StaticAccess)
