@@ -9,7 +9,7 @@ class UserDataSerializer
     public static function serialize(array $userData): array
     {
         return [
-            'id'                => $userData['id']                ?? '',
+            'id'                => (string) ($userData['id'] ?? ''),  // Casting to string to ensure type consistency
             'username'          => $userData['login']             ?? '',
             'display_name'      => $userData['display_name']      ?? '',
             'type'              => $userData['type']              ?? '',
@@ -18,7 +18,7 @@ class UserDataSerializer
             'profile_image_url' => $userData['profile_image_url'] ?? '',
             'offline_image_url' => $userData['offline_image_url'] ?? '',
             'view_count'        => $userData['view_count']        ?? 0,
-            'created_at'        => isset($userData['created_at']) ? Carbon::parse($userData['created_at'])->toIso8601String() : null,
+            'created_at'        => isset($userData['created_at']) ? Carbon::parse($userData['created_at'])->toIso8601String() : '',
         ];
     }
 }
