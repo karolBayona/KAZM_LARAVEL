@@ -1,6 +1,6 @@
 <?php
 
-namespace Services;
+namespace Services\StreamsDataManager;
 
 use App\Infrastructure\Clients\APIClient;
 use App\Services\StreamsDataManager\GetStreamsService;
