@@ -6,26 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Token extends Model
 {
-    // Especifica el nombre de la tabla si no sigue las convenciones de Laravel
-    protected $table = 'token';
+    protected $table = 'token';  // El nombre de la tabla es explícitamente declarado como 'token'
 
-    // Laravel espera una columna 'id' por defecto. Dado que tu clave primaria es 'token', necesitas especificarlo.
-    protected $primaryKey = 'token';
+    protected $primaryKey = 'token';  // La clave primaria es 'token'
 
-    // Indica que la clave primaria no es un número entero.
-    public $incrementing = false;
+    public $incrementing = false;  // No se autoincrementa, visibilidad pública necesaria
 
-    // Indica el tipo de dato de la clave primaria, en este caso 'string'.
-    protected $keyType = 'string';
+    protected $keyType = 'string';  // Tipo de clave primaria es string
 
-    // Desactiva las marcas de tiempo 'updated_at', pero mantiene 'created_at'.
-    // No es necesario si solo quieres evitar el error por falta de 'updated_at', pero se incluye por completitud.
-    public $timestamps      = true;
-    public const null UPDATED_AT = null;
+    public $timestamps = true;  // Los timestamps están habilitados
 
-    // Especifica los atributos que pueden ser asignados masivamente.
-    protected $fillable = ['token'];
+    public const UPDATED_AT = null;  // Desactiva la actualización automática de 'updated_at', constante pública
 
-    // Aunque no es estrictamente necesario, puedes especificar que 'created_at' se maneje como instancia de Carbon.
-    protected array $dates = ['created_at'];
+    protected $fillable = ['token'];  // Los atributos que se pueden asignar masivamente
+
+    protected $dates = ['created_at'];  // Trata 'created_at' como una instancia de Carbon
 }
