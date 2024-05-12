@@ -1,15 +1,15 @@
 <?php
 
-namespace Services;
+namespace Services\UserDataManager;
 
-use PHPUnit\Framework\TestCase;
 use App\Infrastructure\Clients\APIClient;
 use App\Infrastructure\Clients\DBClient;
 use App\Models\UsersTwitch;
 use App\Services\UserDataManager\GetUserService;
+use Exception;
 use Illuminate\Http\Client\Response;
 use PHPUnit\Framework\MockObject\MockObject;
-use Exception;
+use PHPUnit\Framework\TestCase;
 
 class GetUserServiceTest extends TestCase
 {
