@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
     branches:
-      - master
+      - main
     paths:
       - app/**
 
@@ -27,4 +27,4 @@ jobs:
 
       - name: Run GRUMPHP
         run: |
-          ./vendor/bin/grumphp run
+          ./vendor/bin/grumphp run
