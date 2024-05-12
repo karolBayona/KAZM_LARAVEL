@@ -3,16 +3,21 @@
 namespace App\Services;
 
 use App\Models\Token;
+use GuzzleHttp\Promise\PromiseInterface;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
+/**
+ * @SuppressWarnings(PHPMD.StaticAccess)
+ */
 class TokenTwitch
 {
-    private $clientID;
-    private $clientSecret;
+    private mixed $clientID;
+    private mixed $clientSecret;
 
     public function __construct()
     {
-        $this->clientID = env('TWITCH_CLIENT_ID');
+        $this->clientID     = env('TWITCH_CLIENT_ID');
         $this->clientSecret = env('TWITCH_CLIENT_SECRET');
     }
 
@@ -40,13 +45,12 @@ class TokenTwitch
             return $newToken;
         }
     }
-    public function getNewTokenFromApi(): \Illuminate\Http\Client\Response|\GuzzleHttp\Promise\PromiseInterface
+    public function getNewTokenFromApi(): Response|PromiseInterface
     {
-        $response = Http::asForm()->post('https://id.twitch.tv/oauth2/token', [
-            'client_id' => $this->clientID,
+        return Http::asForm()->post('https://id.twitch.tv/oauth2/token', [
+            'client_id'     => $this->clientID,
             'client_secret' => $this->clientSecret,
-            'grant_type' => 'client_credentials',
+            'grant_type'    => 'client_credentials',
         ]);
-        return $response;
     }
 }
