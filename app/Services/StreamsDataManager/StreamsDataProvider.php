@@ -3,9 +3,9 @@
 namespace App\Services\StreamsDataManager;
 
 use App\Config\TwitchConfig;
-use App\Services\TokenProvider;
 use App\Infrastructure\Clients\APIClient;
 use App\Infrastructure\Serializers\StreamsDataSerializer;
+use App\Services\TokenProvider;
 use Exception;
 use Illuminate\Http\JsonResponse;
 
