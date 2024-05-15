@@ -28,14 +28,14 @@ class CreateNewUserController
 
         if ($userCreated) {
             return response()->json(["username" => $username, "message" => JsonReturnMessages::NEW_USER_SUCCESSFUL_RESPONSE], 201);
-        } else {
-            $userExists = $this->newUserProvider->userExists($username);
-
-            if ($userExists) {
-                return response()->json(["error" => JsonReturnMessages::NEW_USER_ALREADY_EXISTS], 409);
-            } else {
-                return response()->json(["error" => JsonReturnMessages::NEW_USER_SERVER_ERROR], 500);
-            }
         }
+
+        $userExists = $this->newUserProvider->userExists($username);
+
+        if ($userExists) {
+            return response()->json(["error" => JsonReturnMessages::NEW_USER_ALREADY_EXISTS], 409);
+        }
+
+        return response()->json(["error" => JsonReturnMessages::NEW_USER_SERVER_ERROR], 500);
     }
 }
