@@ -53,7 +53,7 @@ class StreamerDataSerializerTest extends TestCase
 
     public function test_serialization_fills_missing_data_with_null()
     {
-        $streamerDataWithMissing = [
+        $streamerDataWithout = [
             'id'    => 123,
             'login' => 'john_doe',
         ];
@@ -70,7 +70,7 @@ class StreamerDataSerializerTest extends TestCase
             'created_at'        => null,
         ];
 
-        $serializedData = StreamerDataSerializer::serialize($streamerDataWithMissing);
+        $serializedData = StreamerDataSerializer::serialize($streamerDataWithout);
 
         $this->assertEquals($expectedData, $serializedData);
     }

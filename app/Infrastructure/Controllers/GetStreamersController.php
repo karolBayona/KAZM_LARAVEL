@@ -9,11 +9,11 @@ use Exception;
 
 class GetStreamersController
 {
-    private StreamersDataProvider $streamersDataProvider;
+    private StreamersDataProvider $streamersProvider;
 
-    public function __construct(StreamersDataProvider $streamersDataProvider)
+    public function __construct(StreamersDataProvider $streamersProvider)
     {
-        $this->streamersDataProvider = $streamersDataProvider;
+        $this->streamersProvider = $streamersProvider;
     }
 
     public function __invoke(Request $request): JsonResponse
@@ -24,7 +24,7 @@ class GetStreamersController
         }
 
         try {
-            return $this->streamersDataProvider->execute((int)$userID);
+            return $this->streamersProvider->execute((int)$userID);
         } catch (Exception $exception) {
             if ($exception->getCode() == 503) {
                 return response()->json([

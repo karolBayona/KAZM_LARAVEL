@@ -22,9 +22,9 @@ class StreamersDataProvider
 
     public function __construct(TokenProvider $tokenProvider, APIClient $apiClient, DBClient $dbClient, TwitchConfig $twitchConfig)
     {
-        $this->tokenProvider  = $tokenProvider;
+        $this->tokenProvider      = $tokenProvider;
         $this->getStreamerService = new GetStreamerService($apiClient, $dbClient);
-        $this->twitchConfig   = $twitchConfig;
+        $this->twitchConfig       = $twitchConfig;
     }
 
     /**
