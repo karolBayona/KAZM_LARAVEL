@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class UsersTwitch extends Model
+class StreamersTwitch extends Model
 {
     protected $table      = 'usersTwitch';
     protected $primaryKey = 'id';

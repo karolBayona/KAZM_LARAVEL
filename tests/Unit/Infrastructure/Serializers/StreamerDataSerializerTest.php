@@ -2,22 +2,22 @@
 
 namespace Tests\Unit\Infrastructure\Serializers;
 
-use App\Infrastructure\Serializers\UserDataSerializer;
+use App\Infrastructure\Serializers\StreamerDataSerializer;
 use Carbon\Carbon;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.StaticAccess)
  */
-class UserDataSerializerTest extends TestCase
+class StreamerDataSerializerTest extends TestCase
 {
-    protected array $userData;
+    protected array $streamerData;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->userData = [
+        $this->streamerData = [
             'id'                => 123,
             'login'             => 'john_doe',
             'display_name'      => 'John Doe',
@@ -33,7 +33,7 @@ class UserDataSerializerTest extends TestCase
 
     public function test_serialization_preserves_complete_data()
     {
-        $serializedData = UserDataSerializer::serialize($this->userData);
+        $serializedData = StreamerDataSerializer::serialize($this->streamerData);
 
         $expectedData = [
             'id'                => 123,
@@ -53,7 +53,7 @@ class UserDataSerializerTest extends TestCase
 
     public function test_serialization_fills_missing_data_with_null()
     {
-        $userDataWithMissing = [
+        $streamerDataWithMissing = [
             'id'    => 123,
             'login' => 'john_doe',
         ];
@@ -70,7 +70,7 @@ class UserDataSerializerTest extends TestCase
             'created_at'        => null,
         ];
 
-        $serializedData = UserDataSerializer::serialize($userDataWithMissing);
+        $serializedData = StreamerDataSerializer::serialize($streamerDataWithMissing);
 
         $this->assertEquals($expectedData, $serializedData);
     }

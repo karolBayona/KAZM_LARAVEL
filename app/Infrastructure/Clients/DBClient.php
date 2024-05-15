@@ -3,7 +3,7 @@
 namespace App\Infrastructure\Clients;
 
 use App\Models\Token;
-use App\Models\UsersTwitch;
+use App\Models\StreamersTwitch;
 use Illuminate\Support\Carbon;
 
 /**
@@ -26,26 +26,26 @@ class DBClient
         Token::create(['token' => $newToken,]);
     }
 
-    public function updateOrCreateUserInDB(array $userData): UsersTwitch
+    public function updateOrCreateStreamerInDB(array $streamerData): StreamersTwitch
     {
-        return UsersTwitch::updateOrCreate(
-            ['id' => $userData['id']],
+        return StreamersTwitch::updateOrCreate(
+            ['id' => $streamerData['id']],
             [
-                'login'             => $userData['login'],
-                'display_name'      => $userData['display_name'],
-                'type'              => $userData['type'],
-                'broadcaster_type'  => $userData['broadcaster_type'],
-                'description'       => $userData['description'],
-                'profile_image_url' => $userData['profile_image_url'],
-                'offline_image_url' => $userData['offline_image_url'],
-                'view_count'        => $userData['view_count'],
-                'created_at'        => Carbon::parse($userData['created_at'])->toDateTimeString(),
+                'login'             => $streamerData['login'],
+                'display_name'      => $streamerData['display_name'],
+                'type'              => $streamerData['type'],
+                'broadcaster_type'  => $streamerData['broadcaster_type'],
+                'description'       => $streamerData['description'],
+                'profile_image_url' => $streamerData['profile_image_url'],
+                'offline_image_url' => $streamerData['offline_image_url'],
+                'view_count'        => $streamerData['view_count'],
+                'created_at'        => Carbon::parse($streamerData['created_at'])->toDateTimeString(),
             ]
         );
     }
 
-    public function getUserFromDB(int $userId): ?UsersTwitch
+    public function getStreamerFromDB(int $streamerID): ?StreamersTwitch
     {
-        return UsersTwitch::find($userId);
+        return StreamersTwitch::find($streamerID);
     }
 }

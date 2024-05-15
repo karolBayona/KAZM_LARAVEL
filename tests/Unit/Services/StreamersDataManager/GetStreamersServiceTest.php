@@ -1,22 +1,22 @@
 <?php
 
-namespace Services\UserDataManager;
+namespace Services\StreamersDataManager;
 
 use App\Infrastructure\Clients\APIClient;
 use App\Infrastructure\Clients\DBClient;
-use App\Models\UsersTwitch;
-use App\Services\UserDataManager\GetUserService;
+use App\Models\StreamersTwitch;
+use App\Services\StreamersDataManager\GetStreamerService;
 use Exception;
 use Illuminate\Http\Client\Response;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class GetUserServiceTest extends TestCase
+class GetStreamersServiceTest extends TestCase
 {
     private MockObject|APIClient $apiClient;
     private MockObject|DBClient $dbClient;
     private Response|MockObject $response;
-    private GetUserService $getUserService;
+    private GetStreamerService $getUserService;
 
     /**
      * @throws Exception|\PHPUnit\Framework\MockObject\Exception
@@ -26,7 +26,7 @@ class GetUserServiceTest extends TestCase
         $this->apiClient = $this->createMock(APIClient::class);
         $this->dbClient  = $this->createMock(DBClient::class);
         $this->response  = $this->createMock(Response::class);
-        $this->getUserService       = new GetUserService($this->apiClient, $this->dbClient);
+        $this->getUserService       = new GetStreamerService($this->apiClient, $this->dbClient);
     }
 
     /**
@@ -35,7 +35,7 @@ class GetUserServiceTest extends TestCase
      */
     public function test_returns_correct_data_when_api_response_is_successful()
     {
-        $this->apiClient->method('getDataForUserFromAPI')
+        $this->apiClient->method('getDataForStreamersFromAPI')
             ->willReturn($this->response);
         $this->response->method('successful')
             ->willReturn(true);
@@ -55,7 +55,7 @@ class GetUserServiceTest extends TestCase
                 ]
             ]]);
 
-        $result = $this->getUserService->getUser('clientId', 'accessToken', 1);
+        $result = $this->getUserService->getStreamer('clientId', 'accessToken', 1);
 
         $this->assertEquals([
             'id'                => 1,
@@ -76,7 +76,7 @@ class GetUserServiceTest extends TestCase
      */
     public function test_throws_exception_when_api_response_is_unsuccessful()
     {
-        $this->apiClient->method('getDataForUserFromAPI')
+        $this->apiClient->method('getDataForStreamersFromAPI')
             ->willReturn($this->response);
         $this->response->method('successful')
             ->willReturn(false);
@@ -85,7 +85,7 @@ class GetUserServiceTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('No se pueden devolver usuarios en este momento, inténtalo más tarde');
 
-        $this->getUserService->getUser('clientId', 'accessToken', 1);
+        $this->getUserService->getStreamer('clientId', 'accessToken', 1);
     }
 
     /**
@@ -93,7 +93,7 @@ class GetUserServiceTest extends TestCase
      */
     public function test_throws_exception_when_api_response_contains_no_user_data()
     {
-        $this->apiClient->method('getDataForUserFromAPI')
+        $this->apiClient->method('getDataForStreamersFromAPI')
             ->willReturn($this->response);
         $this->response->method('successful')
             ->willReturn(true);
@@ -101,9 +101,9 @@ class GetUserServiceTest extends TestCase
             ->willReturn(['data' => []]);
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('No se encontraron datos de usuario');
-        $this->dbClient->expects($this->never())->method('updateOrCreateUserInDB');
+        $this->dbClient->expects($this->never())->method('updateOrCreateStreamerInDB');
 
-        $this->getUserService->getUser('clientId', 'accessToken', 1);
+        $this->getUserService->getStreamer('clientId', 'accessToken', 1);
     }
 
     /**
@@ -111,7 +111,7 @@ class GetUserServiceTest extends TestCase
      */
     public function test_throws_exception_on_db_update_failure()
     {
-        $this->apiClient->method('getDataForUserFromAPI')
+        $this->apiClient->method('getDataForStreamersFromAPI')
             ->willReturn($this->response);
         $this->response->method('successful')
             ->willReturn(true);
@@ -130,12 +130,12 @@ class GetUserServiceTest extends TestCase
                     'created_at'        => '2022-01-01 00:00:00',
                 ]
             ]]);
-        $this->dbClient->method('updateOrCreateUserInDB')
+        $this->dbClient->method('updateOrCreateStreamerInDB')
             ->will($this->throwException(new Exception('Error al actualizar o crear usuario en DB')));
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Error al actualizar o crear usuario en DB');
 
-        $this->getUserService->getUser('clientId', 'accessToken', 1);
+        $this->getUserService->getStreamer('clientId', 'accessToken', 1);
     }
 
     /**
@@ -143,7 +143,7 @@ class GetUserServiceTest extends TestCase
      */
     public function test_throws_exception_with_api_response_is_unsuccessful_with_non_500_status()
     {
-        $this->apiClient->method('getDataForUserFromAPI')
+        $this->apiClient->method('getDataForStreamersFromAPI')
             ->willReturn($this->response);
         $this->response->method('successful')
             ->willReturn(false);
@@ -152,7 +152,7 @@ class GetUserServiceTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('No se pudieron obtener los datos de los usuarios');
 
-        $this->getUserService->getUser('clientId', 'accessToken', 1);
+        $this->getUserService->getStreamer('clientId', 'accessToken', 1);
     }
 
     /**
@@ -172,13 +172,13 @@ class GetUserServiceTest extends TestCase
             'view_count'        => 100,
             'created_at'        => '2022-01-01 00:00:00',
         ];
-        $this->dbClient->method('getUserFromDB')
-            ->willReturn(new UsersTwitch($expectedUserData));
+        $this->dbClient->method('getStreamerFromDB')
+            ->willReturn(new StreamersTwitch($expectedUserData));
 
         $this->apiClient->expects($this->never())
-            ->method('getDataForUserFromAPI');
+            ->method('getDataForStreamersFromAPI');
 
-        $result = $this->getUserService->getUser('clientId', 'accessToken', 1);
+        $result = $this->getUserService->getStreamer('clientId', 'accessToken', 1);
 
         $this->assertEquals($expectedUserData, $result);
     }
@@ -200,20 +200,20 @@ class GetUserServiceTest extends TestCase
             'view_count'        => 200,
             'created_at'        => '2022-02-02 00:00:00',
         ];
-        $this->dbClient->method('getUserFromDB')
+        $this->dbClient->method('getStreamerFromDB')
             ->willReturn(null);
         $this->response->method('successful')
             ->willReturn(true);
         $this->response->method('json')
             ->willReturn(['data' => [$userDataFromAPI]]);
-        $this->apiClient->method('getDataForUserFromAPI')
+        $this->apiClient->method('getDataForStreamersFromAPI')
             ->willReturn($this->response);
         $this->dbClient->expects($this->once())
-            ->method('updateOrCreateUserInDB')
+            ->method('updateOrCreateStreamerInDB')
             ->with($this->equalTo($userDataFromAPI))
-            ->willReturn(new UsersTwitch($userDataFromAPI));
+            ->willReturn(new StreamersTwitch($userDataFromAPI));
 
-        $result = $this->getUserService->getUser('clientId', 'accessToken', 2);
+        $result = $this->getUserService->getStreamer('clientId', 'accessToken', 2);
 
         $this->assertEquals($userDataFromAPI, $result);
     }
