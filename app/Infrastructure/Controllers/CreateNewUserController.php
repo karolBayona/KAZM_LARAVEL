@@ -21,21 +21,21 @@ class CreateNewUserController
         $password = $request->input('password');
 
         if (empty($username) || empty($password)) {
-            return response()->json(["error" => JsonReturnMessages::NEW_USER_PARAMETER_MISSING], 400);
+            return response()->json(['error' => JsonReturnMessages::NEW_USER_PARAMETER_MISSING], 400);
         }
 
         $userCreated = $this->newUserProvider->createUser($username, $password);
 
         if ($userCreated) {
-            return response()->json(["username" => $username, "message" => JsonReturnMessages::NEW_USER_SUCCESSFUL_RESPONSE], 201);
+            return response()->json(['username' => $username, 'message' => JsonReturnMessages::NEW_USER_SUCCESSFUL_RESPONSE], 201);
         }
 
         $userExists = $this->newUserProvider->userExists($username);
 
         if ($userExists) {
-            return response()->json(["error" => JsonReturnMessages::NEW_USER_ALREADY_EXISTS], 409);
+            return response()->json(['error' => JsonReturnMessages::NEW_USER_ALREADY_EXISTS], 409);
         }
 
-        return response()->json(["error" => JsonReturnMessages::NEW_USER_SERVER_ERROR], 500);
+        return response()->json(['error' => JsonReturnMessages::NEW_USER_SERVER_ERROR], 500);
     }
 }
