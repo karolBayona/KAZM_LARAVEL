@@ -16,7 +16,7 @@ class GetStreamersServiceTest extends TestCase
     private MockObject|APIClient $apiClient;
     private MockObject|DBClient $dbClient;
     private Response|MockObject $response;
-    private GetStreamerService $getUserService;
+    private GetStreamerService $getStreamersService;
 
     /**
      * @throws Exception|\PHPUnit\Framework\MockObject\Exception
@@ -26,7 +26,7 @@ class GetStreamersServiceTest extends TestCase
         $this->apiClient = $this->createMock(APIClient::class);
         $this->dbClient  = $this->createMock(DBClient::class);
         $this->response  = $this->createMock(Response::class);
-        $this->getUserService       = new GetStreamerService($this->apiClient, $this->dbClient);
+        $this->getStreamersService       = new GetStreamerService($this->apiClient, $this->dbClient);
     }
 
     /**
@@ -55,7 +55,7 @@ class GetStreamersServiceTest extends TestCase
                 ]
             ]]);
 
-        $result = $this->getUserService->getStreamer('clientId', 'accessToken', 1);
+        $result = $this->getStreamersService->getStreamer('clientId', 'accessToken', 1);
 
         $this->assertEquals([
             'id'                => 1,
@@ -83,15 +83,15 @@ class GetStreamersServiceTest extends TestCase
         $this->response->method('status')
             ->willReturn(500);
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('No se pueden devolver usuarios en este momento, inténtalo más tarde');
+        $this->expectExceptionMessage('No se pueden devolver streamers en este momento, inténtalo más tarde');
 
-        $this->getUserService->getStreamer('clientId', 'accessToken', 1);
+        $this->getStreamersService->getStreamer('clientId', 'accessToken', 1);
     }
 
     /**
      * @throws Exception|Exception
      */
-    public function test_throws_exception_when_api_response_contains_no_user_data()
+    public function test_throws_exception_when_api_response_contains_no_streamer_data()
     {
         $this->apiClient->method('getDataForStreamersFromAPI')
             ->willReturn($this->response);
@@ -100,10 +100,10 @@ class GetStreamersServiceTest extends TestCase
         $this->response->method('json')
             ->willReturn(['data' => []]);
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('No se encontraron datos de usuario');
+        $this->expectExceptionMessage('No se encontraron datos de streamer');
         $this->dbClient->expects($this->never())->method('updateOrCreateStreamerInDB');
 
-        $this->getUserService->getStreamer('clientId', 'accessToken', 1);
+        $this->getStreamersService->getStreamer('clientId', 'accessToken', 1);
     }
 
     /**
@@ -131,11 +131,11 @@ class GetStreamersServiceTest extends TestCase
                 ]
             ]]);
         $this->dbClient->method('updateOrCreateStreamerInDB')
-            ->will($this->throwException(new Exception('Error al actualizar o crear usuario en DB')));
+            ->will($this->throwException(new Exception('Error al actualizar o crear streamer en DB')));
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Error al actualizar o crear usuario en DB');
+        $this->expectExceptionMessage('Error al actualizar o crear streamer en DB');
 
-        $this->getUserService->getStreamer('clientId', 'accessToken', 1);
+        $this->getStreamersService->getStreamer('clientId', 'accessToken', 1);
     }
 
     /**
@@ -150,15 +150,15 @@ class GetStreamersServiceTest extends TestCase
         $this->response->method('status')
             ->willReturn(400);
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('No se pudieron obtener los datos de los usuarios');
+        $this->expectExceptionMessage('No se pudieron obtener los datos de los streamers');
 
-        $this->getUserService->getStreamer('clientId', 'accessToken', 1);
+        $this->getStreamersService->getStreamer('clientId', 'accessToken', 1);
     }
 
     /**
      * @throws Exception
      */
-    public function test_get_user_retrieves_data_from_database_if_present()
+    public function test_get_streamer_retrieves_data_from_database_if_present()
     {
         $expectedUserData = [
             'id'                => 1,
@@ -178,7 +178,7 @@ class GetStreamersServiceTest extends TestCase
         $this->apiClient->expects($this->never())
             ->method('getDataForStreamersFromAPI');
 
-        $result = $this->getUserService->getStreamer('clientId', 'accessToken', 1);
+        $result = $this->getStreamersService->getStreamer('clientId', 'accessToken', 1);
 
         $this->assertEquals($expectedUserData, $result);
     }
@@ -186,7 +186,7 @@ class GetStreamersServiceTest extends TestCase
     /**
      * @throws Exception
      */
-    public function test_get_user_fetches_from_api_and_updates_db_if_not_in_database()
+    public function test_get_streamer_fetches_from_api_and_updates_db_if_not_in_database()
     {
         $userDataFromAPI = [
             'id'                => 2,
@@ -213,7 +213,7 @@ class GetStreamersServiceTest extends TestCase
             ->with($this->equalTo($userDataFromAPI))
             ->willReturn(new StreamersTwitch($userDataFromAPI));
 
-        $result = $this->getUserService->getStreamer('clientId', 'accessToken', 2);
+        $result = $this->getStreamersService->getStreamer('clientId', 'accessToken', 2);
 
         $this->assertEquals($userDataFromAPI, $result);
     }
