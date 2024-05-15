@@ -1,14 +1,14 @@
 <?php
 
-namespace Services\UserDataManager;
+namespace Services\StreamersDataManager;
 
 use App\Config\TwitchConfig;
 use App\Infrastructure\Clients\APIClient;
 use App\Infrastructure\Clients\DBClient;
-use App\Infrastructure\Serializers\UserDataSerializer;
-use App\Models\UsersTwitch;
+use App\Infrastructure\Serializers\StreamerDataSerializer;
+use App\Models\StreamersTwitch;
 use App\Services\TokenProvider;
-use App\Services\UserDataManager\UserDataProvider;
+use App\Services\StreamersDataManager\StreamersDataProvider;
 use Exception;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use Illuminate\Http\Client\Response;
@@ -19,7 +19,7 @@ use Tests\TestCase;
 /**
  * @SuppressWarnings(PHPMD.StaticAccess)
  */
-class UserDataProviderTest extends TestCase
+class StreamerDataProviderTest extends TestCase
 {
     /**
      * @throws Exception
@@ -30,22 +30,24 @@ class UserDataProviderTest extends TestCase
         $apiClient       = Mockery::mock(APIClient::class);
         $dbClient        = Mockery::mock(DBClient::class);
         $twitchConfig    = Mockery::mock(TwitchConfig::class);
-        $usersTwitchMock = Mockery::mock(UsersTwitch::class);
-        $tokenProvider->shouldReceive('getToken')->once()->andReturn('fake_access_token');
-        $twitchConfig->shouldReceive('clientId')->once()->andReturn('fake_client_id');
-        $apiClient->shouldReceive('getDataForUserFromAPI')->andReturn(new Response(new GuzzleResponse(200, [], json_encode(['data' => [['id' => '123', 'login' => 'testuser', 'display_name' => 'Test User', 'type' => 'user', 'broadcaster_type' => 'affiliate', 'description' => 'Sample description', 'profile_image_url' => 'http://example.com/profile.jpg', 'offline_image_url' => 'http://example.com/offline.jpg', 'view_count' => 100, 'created_at' => '2020-01-01T00:00:00Z']]]))));
-        $dbClient->shouldReceive('getUserFromDB')->andReturn(null);
-        $dbClient->shouldReceive('updateOrCreateUserInDB')->andReturn($usersTwitchMock);
-        $userDataProvider = new UserDataProvider(
+        $streamersTwitchMock = Mockery::mock(StreamersTwitch::class);
+        $streamerDataProvider = new StreamersDataProvider(
             $tokenProvider,
             $apiClient,
             $dbClient,
             $twitchConfig
         );
 
-        $response = $userDataProvider->execute(123);
+        $tokenProvider->shouldReceive('getToken')->once()->andReturn('fake_access_token');
+        $twitchConfig->shouldReceive('clientId')->once()->andReturn('fake_client_id');
+        $apiClient->shouldReceive('getDataForStreamersFromAPI')->andReturn(new Response(new GuzzleResponse(200, [], json_encode(['data' => [['id' => '123', 'login' => 'testuser', 'display_name' => 'Test User', 'type' => 'user', 'broadcaster_type' => 'affiliate', 'description' => 'Sample description', 'profile_image_url' => 'http://example.com/profile.jpg', 'offline_image_url' => 'http://example.com/offline.jpg', 'view_count' => 100, 'created_at' => '2020-01-01T00:00:00Z']]]))));
+        $dbClient->shouldReceive('getStreamerFromDB')->andReturn(null);
+        $dbClient->shouldReceive('updateOrCreateStreamerInDB')->andReturn($streamersTwitchMock);
 
-        $expectedData = UserDataSerializer::serialize([
+
+        $response = $streamerDataProvider->execute(123);
+
+        $expectedData = StreamerDataSerializer::serialize([
             'id'                => '123',
             'login'             => 'testuser',
             'display_name'      => 'Test User',
