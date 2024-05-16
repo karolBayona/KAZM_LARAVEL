@@ -3,6 +3,7 @@
 namespace App\Infrastructure\Controllers;
 
 use App\Config\JsonReturnMessages;
+use App\Services\NewUserManager\NewUserProvider;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -24,16 +25,16 @@ class CreateNewUserController
             return response()->json(['error' => JsonReturnMessages::NEW_USER_PARAMETER_MISSING], 400);
         }
 
-        $userCreated = $this->newUserProvider->createUser($username, $password);
-
-        if ($userCreated) {
-            return response()->json(['username' => $username, 'message' => JsonReturnMessages::NEW_USER_SUCCESSFUL_RESPONSE], 201);
-        }
-
         $userExists = $this->newUserProvider->userExists($username);
 
         if ($userExists) {
             return response()->json(['error' => JsonReturnMessages::NEW_USER_ALREADY_EXISTS], 409);
+        }
+
+        $userCreated = $this->newUserProvider->execute($username, $password);
+
+        if ($userCreated) {
+            return response()->json(['username' => $username, 'message' => JsonReturnMessages::NEW_USER_SUCCESSFUL_RESPONSE], 201);
         }
 
         return response()->json(['error' => JsonReturnMessages::NEW_USER_SERVER_ERROR], 500);
