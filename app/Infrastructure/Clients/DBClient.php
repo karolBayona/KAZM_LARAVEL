@@ -4,6 +4,7 @@ namespace App\Infrastructure\Clients;
 
 use App\Models\Token;
 use App\Models\StreamersTwitch;
+use App\Models\TwitchUsers;
 use Illuminate\Support\Carbon;
 
 /**
@@ -47,5 +48,13 @@ class DBClient
     public function getStreamerFromDB(int $streamerID): ?StreamersTwitch
     {
         return StreamersTwitch::find($streamerID);
+    }
+
+    public function createTwitchUser(string $username, string $password)
+    {
+        return TwitchUsers::create([
+                'username' => $username,
+                'password' => $password,
+            ]);
     }
 }
