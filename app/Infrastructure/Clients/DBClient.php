@@ -50,11 +50,18 @@ class DBClient
         return StreamersTwitch::find($streamerID);
     }
 
-    public function createTwitchUser(string $username, string $password)
+    public function createTwitchUser(string $username, string $password): void
     {
-        return TwitchUsers::create([
-                'username' => $username,
-                'password' => $password,
-            ]);
+        TwitchUsers::create([
+            'username' => $username,
+            'password' => $password,
+        ]);
+    }
+
+    public function doesTwitchUserExist(string $username): bool
+    {
+        $twitchUser = TwitchUsers::where('username', $username)->first();
+
+        return $twitchUser !== null;
     }
 }
