@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('twitch_users', function (Blueprint $table) {
-            $table->id('user_id')->autoIncrement();
-            $table->string('username')->unique();
-            $table->string('password');
+        Schema::create('twitch_streamers', function (Blueprint $table) {
+            $table->id('streamer_id');
+            $table->string('name');
+            $table->text('other_details')->nullable();
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('twitch_users');
+        Schema::dropIfExists('twitch_streamers');
     }
 };
