@@ -6,7 +6,7 @@ use App\Config\TwitchConfig;
 use App\Infrastructure\Clients\APIClient;
 use App\Infrastructure\Clients\DBClient;
 use App\Infrastructure\Serializers\StreamerDataSerializer;
-use App\Models\StreamersTwitch;
+use App\Models\Streamers;
 use App\Services\TokenProvider;
 use App\Services\StreamersDataManager\StreamersDataProvider;
 use Exception;
@@ -30,7 +30,7 @@ class StreamerDataProviderTest extends TestCase
         $apiClient       = Mockery::mock(APIClient::class);
         $dbClient        = Mockery::mock(DBClient::class);
         $twitchConfig    = Mockery::mock(TwitchConfig::class);
-        $streamersTwitchMock = Mockery::mock(StreamersTwitch::class);
+        $streamersTwitchMock = Mockery::mock(Streamers::class);
         $streamerDataProvider = new StreamersDataProvider(
             $tokenProvider,
             $apiClient,
