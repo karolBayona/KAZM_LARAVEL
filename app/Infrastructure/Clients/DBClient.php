@@ -4,7 +4,7 @@ namespace App\Infrastructure\Clients;
 
 use App\Models\Token;
 use App\Models\Streamers;
-use App\Models\TwitchUsers;
+use App\Models\TwitchUser;
 use Illuminate\Support\Carbon;
 
 /**
@@ -52,7 +52,7 @@ class DBClient
 
     public function createTwitchUser(string $username, string $password): void
     {
-        TwitchUsers::create([
+        TwitchUser::create([
             'username' => $username,
             'password' => $password,
         ]);
@@ -60,7 +60,7 @@ class DBClient
 
     public function doesTwitchUserExist(string $username): bool
     {
-        $twitchUser = TwitchUsers::where('username', $username)->first();
+        $twitchUser = TwitchUser::where('username', $username)->first();
 
         return $twitchUser !== null;
     }
