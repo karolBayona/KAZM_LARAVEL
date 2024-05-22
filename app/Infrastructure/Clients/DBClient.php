@@ -3,7 +3,7 @@
 namespace App\Infrastructure\Clients;
 
 use App\Models\Token;
-use App\Models\StreamersTwitch;
+use App\Models\Streamers;
 use App\Models\TwitchUsers;
 use Illuminate\Support\Carbon;
 
@@ -27,9 +27,9 @@ class DBClient
         Token::create(['token' => $newToken,]);
     }
 
-    public function updateOrCreateStreamerInDB(array $streamerData): StreamersTwitch
+    public function updateOrCreateStreamerInDB(array $streamerData): Streamers
     {
-        return StreamersTwitch::updateOrCreate(
+        return Streamers::updateOrCreate(
             ['id' => $streamerData['id']],
             [
                 'login'             => $streamerData['login'],
@@ -45,9 +45,9 @@ class DBClient
         );
     }
 
-    public function getStreamerFromDB(int $streamerID): ?StreamersTwitch
+    public function getStreamerFromDB(int $streamerID): ?Streamers
     {
-        return StreamersTwitch::find($streamerID);
+        return Streamers::find($streamerID);
     }
 
     public function createTwitchUser(string $username, string $password): void

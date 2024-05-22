@@ -4,7 +4,7 @@ namespace Services\StreamersDataManager;
 
 use App\Infrastructure\Clients\APIClient;
 use App\Infrastructure\Clients\DBClient;
-use App\Models\StreamersTwitch;
+use App\Models\Streamers;
 use App\Services\StreamersDataManager\GetStreamerService;
 use Exception;
 use Illuminate\Http\Client\Response;
@@ -173,7 +173,7 @@ class GetStreamersServiceTest extends TestCase
             'created_at'        => '2022-01-01 00:00:00',
         ];
         $this->dbClient->method('getStreamerFromDB')
-            ->willReturn(new StreamersTwitch($expectedUserData));
+            ->willReturn(new Streamers($expectedUserData));
 
         $this->apiClient->expects($this->never())
             ->method('getDataForStreamersFromAPI');
@@ -211,7 +211,7 @@ class GetStreamersServiceTest extends TestCase
         $this->dbClient->expects($this->once())
             ->method('updateOrCreateStreamerInDB')
             ->with($this->equalTo($userDataFromAPI))
-            ->willReturn(new StreamersTwitch($userDataFromAPI));
+            ->willReturn(new Streamers($userDataFromAPI));
 
         $result = $this->getStreamersService->getStreamer('clientId', 'accessToken', 2);
 

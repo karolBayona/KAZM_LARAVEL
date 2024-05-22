@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('streamersTwitch', function (Blueprint $table) {
+        Schema::create('streamers', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->string('login');
             $table->string('display_name');
