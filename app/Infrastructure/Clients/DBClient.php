@@ -64,4 +64,14 @@ class DBClient
 
         return $twitchUser !== null;
     }
+
+    public function getAllTwitchUsers(): array
+    {
+        return TwitchUser::with('streamers')->get()->map(function ($user) {
+            [
+                    'username'          => $user->username,
+                    'followedStreamers' => $user->streamers->pluck('name')
+                ];
+        });
+    }
 }
