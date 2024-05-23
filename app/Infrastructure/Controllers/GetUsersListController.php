@@ -13,7 +13,7 @@ class GetUsersListController
 
     public function __construct(GetUsersListProvider $usersListProvider)
     {
-        $this->$usersListProvider = $usersListProvider;
+        $this->usersListProvider = $usersListProvider;
     }
 
     public function __invoke(Request $request): JsonResponse
