@@ -44,7 +44,7 @@ class NewUserControllerTest extends TestCase
 
         $this->assertInstanceOf(JsonResponse::class, $response);
 
-        $this->assertEquals(JsonReturnMessages::NEW_USER_PARAMETER_MISSING_400, $response->getData()->error);
+        $this->assertEquals(JsonReturnMessages::NEW_USER_PARAMETER_MISSING_400, $response->getData()->{'Bad Request'});
         $this->assertEquals(400, $response->getStatusCode());
     }
 
