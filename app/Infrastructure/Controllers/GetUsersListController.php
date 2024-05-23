@@ -18,8 +18,6 @@ class GetUsersListController
 
     public function __invoke(Request $request): JsonResponse
     {
-        $users = $this->usersListProvider->execute();
-
-        return response()->json($users, 200);
+        return $this->usersListProvider->execute();
     }
 }
