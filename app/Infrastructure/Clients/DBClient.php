@@ -72,6 +72,6 @@ class DBClient
                 'username'          => $user->username,
                 'followedStreamers' => $user->streamers->pluck('name')->all()
             ];
-        });
+        })->toArray();
     }
 }
