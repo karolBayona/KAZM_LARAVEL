@@ -22,7 +22,7 @@ class CreateNewUserController
         $password = $request->input('password');
 
         if (empty($username) || empty($password)) {
-            return response()->json(['error' => JsonReturnMessages::NEW_USER_PARAMETER_MISSING], 400);
+            return response()->json(['Bad Request' => JsonReturnMessages::NEW_USER_PARAMETER_MISSING_400], 400);
         }
 
         return $this->newUserProvider->execute($username, $password);

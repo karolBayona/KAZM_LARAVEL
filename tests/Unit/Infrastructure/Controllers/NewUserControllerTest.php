@@ -44,7 +44,7 @@ class NewUserControllerTest extends TestCase
 
         $this->assertInstanceOf(JsonResponse::class, $response);
 
-        $this->assertEquals(JsonReturnMessages::NEW_USER_PARAMETER_MISSING, $response->getData()->error);
+        $this->assertEquals(JsonReturnMessages::NEW_USER_PARAMETER_MISSING_400, $response->getData()->error);
         $this->assertEquals(400, $response->getStatusCode());
     }
 
@@ -52,14 +52,14 @@ class NewUserControllerTest extends TestCase
     {
         $this->createUserProvider->shouldReceive('execute')
             ->with('testuser', 'testpassword')
-            ->andReturn(new JsonResponse(['username' => 'testuser', 'message' => JsonReturnMessages::NEW_USER_SUCCESSFUL_RESPONSE], 201));
+            ->andReturn(new JsonResponse(['username' => 'testuser', 'message' => JsonReturnMessages::NEW_USER_SUCCESSFUL_RESPONSE_201], 201));
 
         $response = $this->NewUserController->__invoke($this->request);
 
         $this->assertInstanceOf(JsonResponse::class, $response);
 
         $this->assertEquals('testuser', $response->getData()->username);
-        $this->assertEquals(JsonReturnMessages::NEW_USER_SUCCESSFUL_RESPONSE, $response->getData()->message);
+        $this->assertEquals(JsonReturnMessages::NEW_USER_SUCCESSFUL_RESPONSE_201, $response->getData()->message);
         $this->assertEquals(201, $response->getStatusCode());
     }
 }
