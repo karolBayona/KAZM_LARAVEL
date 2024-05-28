@@ -38,7 +38,7 @@ class FollowStreamersProviderTest extends TestCase
     public function given_a_userId_not_found_returns_error_404()
     {
         $this->dbClient
-            ->shouldReceive('doesUserExist')
+            ->shouldReceive('doesTwitchUserExist')
             ->once()
             ->with(999)
             ->andReturn(false);
