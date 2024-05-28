@@ -11,6 +11,9 @@ use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.StaticAccess)
+ */
 class FollowStreamerControllerTest extends TestCase
 {
     protected MockInterface $followProvider;
