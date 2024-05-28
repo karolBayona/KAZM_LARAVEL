@@ -8,11 +8,12 @@ use App\Services\UsersDataManager\FollowStreamersProvider;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Mockery;
+use Mockery\MockInterface;
 use Tests\TestCase;
 
 class FollowStreamerControllerTest extends TestCase
 {
-    protected FollowStreamersProvider|(Mockery\MockInterface&Mockery\LegacyMockInterface) $followProvider;
+    protected MockInterface $followProvider;
     protected FollowStreamerController $followController;
 
     protected function setUp(): void
