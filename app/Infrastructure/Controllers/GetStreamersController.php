@@ -18,13 +18,13 @@ class GetStreamersController
 
     public function __invoke(Request $request): JsonResponse
     {
-        $userID = $request->query('id');
+        $userID = (int)$request->query('id');
         if (empty($userID)) {
             return response()->json(['error' => 'Streamer ID is required'], 400);
         }
 
         try {
-            return $this->streamersProvider->execute((int)$userID);
+            return $this->streamersProvider->execute($userID);
         } catch (Exception $exception) {
             if ($exception->getCode() == 503) {
                 return response()->json([
