@@ -35,19 +35,16 @@ class FollowStreamersProviderTest extends TestCase
     /**
      * @test
      */
-    public function given_a_userId_notFounded_returns_error_404()
+    public function given_a_userId_not_found_returns_error_404()
     {
-        // Arrange
         $this->dbClient
             ->shouldReceive('doesUserExist')
             ->once()
             ->with(999)
             ->andReturn(false);
 
-        // Act
         $response = $this->followProvider->execute(999, 1);
 
-        // Assert
         $this->assertInstanceOf(JsonResponse::class, $response);
         $this->assertEquals(JsonReturnMessages::FOLLOW_STREAMER_NOT_FOUND_404, $response->getData()->error);
         $this->assertEquals(404, $response->getStatusCode());
