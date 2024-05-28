@@ -25,6 +25,6 @@ class FollowStreamerController
             return response()->json(['error' => JsonReturnMessages::FOLLOW_STREAMER_PARAMETER_MISSING_OR_INVALID_400], 400);
         }
 
-        return $this->followProvider->execute($user_id, $streamer_id);
+        return $this->followProvider->execute((int) $user_id, (int) $streamer_id);
     }
 }
