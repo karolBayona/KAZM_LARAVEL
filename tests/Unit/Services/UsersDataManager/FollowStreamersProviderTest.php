@@ -9,7 +9,7 @@ use App\Infrastructure\Clients\DBClient;
 use App\Services\TokenProvider;
 use App\Services\UsersDataManager\FollowStreamersProvider;
 use Exception;
-use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Response as GuzzleResponse; // Use alias to avoid conflict
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Client\Response as HttpResponse;
 use Mockery;
@@ -83,8 +83,7 @@ class FollowStreamersProviderTest extends TestCase
             ->once()
             ->andReturn('fake_client_id');
 
-        $response = new HttpResponse(new Response(200, [], json_encode(['data' => []])));
-
+        $response = new HttpResponse(new GuzzleResponse(200, [], json_encode(['data' => []])));
         $this->apiClient
             ->expects('getDataForStreamersFromAPI')
             ->once()
@@ -96,5 +95,44 @@ class FollowStreamersProviderTest extends TestCase
         $this->assertInstanceOf(JsonResponse::class, $response);
         $this->assertEquals(JsonReturnMessages::FOLLOW_STREAMER_NOT_FOUND_404, $response->getData()->error);
         $this->assertEquals(404, $response->getStatusCode());
+    }
+
+    /**
+     * @test
+     * @throws Exception
+     */
+    public function test_given_user_already_follows_streamer_returns_error_409()
+    {
+        $this->dbClient
+            ->expects('doesTwitchUserExist')
+            ->once()
+            ->with(1)
+            ->andReturn(true);
+        $this->tokenProvider
+            ->expects('getToken')
+            ->once()
+            ->andReturn('fake_access_token');
+        $this->twitchConfig
+            ->expects('clientId')
+            ->once()
+            ->andReturn('fake_client_id');
+
+        $response = new HttpResponse(new GuzzleResponse(200, [], json_encode(['data' => [['id' => '999', 'login' => 'teststreamer']]])));
+        $this->apiClient
+            ->expects('getDataForStreamersFromAPI')
+            ->once()
+            ->with('fake_client_id', 'fake_access_token', 999)
+            ->andReturn($response);
+        $this->dbClient
+            ->expects('doesUserFollowStreamer')
+            ->once()
+            ->with(1, 999)
+            ->andReturn(true);
+
+        $response = $this->followProvider->execute(1, 999);
+
+        $this->assertInstanceOf(JsonResponse::class, $response);
+        $this->assertEquals(JsonReturnMessages::FOLLOW_STREAMERS_CONFLICT_409, $response->getData()->error);
+        $this->assertEquals(409, $response->getStatusCode());
     }
 }
