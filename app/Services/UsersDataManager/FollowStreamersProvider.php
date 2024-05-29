@@ -58,6 +58,8 @@ class FollowStreamersProvider
             return response()->json(['error' => JsonReturnMessages::FOLLOW_STREAMERS_CONFLICT_409], 409);
         }
 
-        return response()->json(['Internal Server Error' => JsonReturnMessages::FOLLOW_STREAMERS_SERVER_ERROR_500], 500);
+        $this->dbClient->followStreamer($userId, $streamerId);
+
+        return response()->json(['message' => JsonReturnMessages::FOLLOW_STREAMER_SUCCESFUL_RESPONSE_200], 200);
     }
 }
