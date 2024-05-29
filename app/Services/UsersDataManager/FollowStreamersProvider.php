@@ -43,6 +43,10 @@ class FollowStreamersProvider
             return response()->json(['error' => JsonReturnMessages::FOLLOW_STREAMER_NOT_FOUND_404], 404);
         }
 
+        if ($this->dbClient->doesUserFollowStreamer($userId, $streamerId)) {
+            return response()->json(['error' => JsonReturnMessages::FOLLOW_STREAMERS_CONFLICT_409], 409);
+        }
+
         return response()->json(['Internal Server Error' => JsonReturnMessages::FOLLOW_STREAMERS_SERVER_ERROR_500], 500);
     }
 }
