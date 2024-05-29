@@ -34,9 +34,16 @@ class FollowStreamersProvider
             return response()->json(['error' => JsonReturnMessages::FOLLOW_STREAMER_NOT_FOUND_404], 404);
         }
 
-        $accessToken = $this->tokenProvider->getToken();
-        $clientId    = $this->twitchConfig->clientId();
+        try {
+            $accessToken = $this->tokenProvider->getToken();
+        } catch (Exception $e) {
+            if ($e->getCode() === 401) {
+                return response()->json(['error' => JsonReturnMessages::FOLLOW_STREAMER_UNAUTHORIZED_401], 401);
+            }
+            throw $e;
+        }
 
+        $clientId = $this->twitchConfig->clientId();
         $response = $this->apiClient->getDataForStreamersFromAPI($clientId, $accessToken, $streamerId);
 
         if (!$response->successful() || empty($response->json()['data'])) {
