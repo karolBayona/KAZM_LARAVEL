@@ -150,10 +150,11 @@ class FollowStreamersProviderTest extends TestCase
             ->once()
             ->with(1)
             ->andReturn(true);
+
         $this->tokenProvider
             ->expects('getToken')
             ->once()
-            ->andReturn(null);
+            ->andThrow(new Exception('Unauthorized', 401));
 
         $response = $this->followProvider->execute(1, 999);
 
