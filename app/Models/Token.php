@@ -21,4 +21,8 @@ class Token extends Model
     protected $fillable = ['token'];  // Los atributos que se pueden asignar masivamente
 
     protected $dates = ['created_at'];  // Trata 'created_at' como una instancia de Carbon
+
+    public static function latest(string $string)
+    {
+    }
 }
