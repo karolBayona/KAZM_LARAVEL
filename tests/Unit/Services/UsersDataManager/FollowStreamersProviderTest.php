@@ -165,6 +165,7 @@ class FollowStreamersProviderTest extends TestCase
 
     /**
      * @test
+     * @throws Exception
      */
     public function given_server_error_returns_error_500()
     {

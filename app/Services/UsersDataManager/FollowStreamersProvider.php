@@ -44,7 +44,11 @@ class FollowStreamersProvider
         }
 
         $clientId = $this->twitchConfig->clientId();
-        $response = $this->apiClient->getDataForStreamersFromAPI($clientId, $accessToken, $streamerId);
+        try {
+            $response = $this->apiClient->getDataForStreamersFromAPI($clientId, $accessToken, $streamerId);
+        } catch (Exception $e) {
+            return response()->json(['error' => JsonReturnMessages::FOLLOW_STREAMERS_SERVER_ERROR_500], 500);
+        }
 
         if (!$response->successful() || empty($response->json()['data'])) {
             return response()->json(['error' => JsonReturnMessages::FOLLOW_STREAMER_NOT_FOUND_404], 404);
