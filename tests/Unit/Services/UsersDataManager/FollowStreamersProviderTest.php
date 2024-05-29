@@ -6,6 +6,7 @@ use App\Config\JsonReturnMessages;
 use App\Config\TwitchConfig;
 use App\Infrastructure\Clients\APIClient;
 use App\Infrastructure\Clients\DBClient;
+use App\Services\StreamsDataManager\StreamsDataProvider;
 use App\Services\TokenProvider;
 use App\Services\UsersDataManager\FollowStreamersProvider;
 use Exception;
@@ -26,16 +27,18 @@ class FollowStreamersProviderTest extends TestCase
     protected MockInterface $tokenProvider;
     protected MockInterface $twitchConfig;
     protected FollowStreamersProvider $followProvider;
+    protected StreamsDataProvider $streamsProvider;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->dbClient       = Mockery::mock(DBClient::class);
-        $this->apiClient      = Mockery::mock(APIClient::class);
-        $this->tokenProvider  = Mockery::mock(TokenProvider::class);
-        $this->twitchConfig   = Mockery::mock(TwitchConfig::class);
-        $this->followProvider = new FollowStreamersProvider($this->dbClient, $this->apiClient, $this->tokenProvider, $this->twitchConfig);
+        $this->dbClient        = Mockery::mock(DBClient::class);
+        $this->apiClient       = Mockery::mock(APIClient::class);
+        $this->tokenProvider   = Mockery::mock(TokenProvider::class);
+        $this->twitchConfig    = Mockery::mock(TwitchConfig::class);
+        $this->followProvider  = new FollowStreamersProvider($this->dbClient, $this->apiClient, $this->tokenProvider, $this->twitchConfig);
+        $this->streamsProvider = new StreamsDataProvider($this->tokenProvider, $this->apiClient, $this->twitchConfig);
     }
 
     protected function tearDown(): void
@@ -134,5 +137,28 @@ class FollowStreamersProviderTest extends TestCase
         $this->assertInstanceOf(JsonResponse::class, $response);
         $this->assertEquals(JsonReturnMessages::FOLLOW_STREAMERS_CONFLICT_409, $response->getData()->error);
         $this->assertEquals(409, $response->getStatusCode());
+    }
+
+    /**
+     * @test
+     * @throws Exception
+     */
+    public function given_invalid_token_should_return_unauthorized()
+    {
+        $this->dbClient
+            ->expects('doesTwitchUserExist')
+            ->once()
+            ->with(1)
+            ->andReturn(true);
+        $this->tokenProvider
+            ->expects('getToken')
+            ->once()
+            ->andReturn(null);
+
+        $response = $this->followProvider->execute(1, 999);
+
+        $this->assertInstanceOf(JsonResponse::class, $response);
+        $this->assertEquals(401, $response->getStatusCode());
+        $this->assertEquals(['error' => JsonReturnMessages::FOLLOW_STREAMER_UNAUTHORIZED_401], $response->getData(true));
     }
 }
