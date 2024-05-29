@@ -83,4 +83,11 @@ class DBClient
             })
             ->exists();
     }
+
+    public function followStreamer(int $userId, int $streamerId): void
+    {
+        $user = TwitchUser::findOrFail($userId);
+        $user->streamers()->attach($streamerId);
+    }
+
 }
