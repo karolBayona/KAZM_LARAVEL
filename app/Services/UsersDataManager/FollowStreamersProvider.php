@@ -8,6 +8,7 @@ use App\Infrastructure\Clients\APIClient;
 use App\Infrastructure\Clients\DBClient;
 use App\Services\TokenProvider;
 use Exception;
+
 use Illuminate\Http\JsonResponse;
 
 class FollowStreamersProvider
