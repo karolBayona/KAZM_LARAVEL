@@ -22,7 +22,4 @@ class Token extends Model
 
     protected $dates = ['created_at'];  // Trata 'created_at' como una instancia de Carbon
 
-    public static function latest(string $string)
-    {
-    }
 }

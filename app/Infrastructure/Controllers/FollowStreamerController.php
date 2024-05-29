@@ -21,7 +21,7 @@ class FollowStreamerController
         $user_id     = $request->input('userId');
         $streamer_id = $request->input('streamerId');
 
-        if(empty($user_id) || empty($streamer_id)) {
+        if (empty($user_id) || empty($streamer_id) || !is_numeric($user_id) || !is_numeric($streamer_id)) {
             return response()->json(['error' => JsonReturnMessages::FOLLOW_STREAMER_PARAMETER_MISSING_OR_INVALID_400], 400);
         }
 
