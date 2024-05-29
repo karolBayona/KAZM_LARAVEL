@@ -162,4 +162,35 @@ class FollowStreamersProviderTest extends TestCase
         $this->assertEquals(401, $response->getStatusCode());
         $this->assertEquals(['error' => JsonReturnMessages::FOLLOW_STREAMER_UNAUTHORIZED_401], $response->getData(true));
     }
+
+    /**
+     * @test
+     */
+    public function given_server_error_returns_error_500()
+    {
+        $this->dbClient
+            ->expects('doesTwitchUserExist')
+            ->once()
+            ->with(1)
+            ->andReturn(true);
+        $this->tokenProvider
+            ->expects('getToken')
+            ->once()
+            ->andReturn('fake_access_token');
+        $this->twitchConfig
+            ->expects('clientId')
+            ->once()
+            ->andReturn('fake_client_id');
+        $this->apiClient
+            ->expects('getDataForStreamersFromAPI')
+            ->once()
+            ->with('fake_client_id', 'fake_access_token', 999)
+            ->andThrow(new Exception('Server error'));
+
+        $response = $this->followProvider->execute(1, 999);
+
+        $this->assertInstanceOf(JsonResponse::class, $response);
+        $this->assertEquals(JsonReturnMessages::FOLLOW_STREAMERS_SERVER_ERROR_500, $response->getData()->error);
+        $this->assertEquals(500, $response->getStatusCode());
+    }
 }
