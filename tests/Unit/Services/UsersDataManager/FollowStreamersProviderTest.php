@@ -8,9 +8,10 @@ use App\Infrastructure\Clients\APIClient;
 use App\Infrastructure\Clients\DBClient;
 use App\Services\TokenProvider;
 use App\Services\UsersDataManager\FollowStreamersProvider;
+use Exception;
+use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Client\Response;
-use GuzzleHttp\Psr7\Response as GuzzleResponse; // Importar la clase correcta para Guzzle Response
+use Illuminate\Http\Client\Response as HttpResponse;
 use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
@@ -45,12 +46,12 @@ class FollowStreamersProviderTest extends TestCase
 
     /**
      * @test
-     * @throws \Exception
+     * @throws Exception
      */
     public function given_a_userId_not_found_returns_error_404()
     {
         $this->dbClient
-            ->shouldReceive('doesTwitchUserExist')
+            ->expects('doesTwitchUserExist')
             ->once()
             ->with(999)
             ->andReturn(false);
@@ -64,27 +65,28 @@ class FollowStreamersProviderTest extends TestCase
 
     /**
      * @test
+     * @throws Exception
      */
     public function given_a_streamerId_not_found_returns_error_404()
     {
         $this->dbClient
-            ->shouldReceive('doesTwitchUserExist')
+            ->expects('doesTwitchUserExist')
             ->once()
             ->with(1)
             ->andReturn(true);
         $this->tokenProvider
-            ->shouldReceive('getToken')
+            ->expects('getToken')
             ->once()
             ->andReturn('fake_access_token');
         $this->twitchConfig
-            ->shouldReceive('clientId')
+            ->expects('clientId')
             ->once()
             ->andReturn('fake_client_id');
 
-        $response = new Response(new GuzzleResponse(200, [], json_encode(['data' => []])));
+        $response = new HttpResponse(new Response(200, [], json_encode(['data' => []])));
 
         $this->apiClient
-            ->shouldReceive('getDataForStreamersFromAPI')
+            ->expects('getDataForStreamersFromAPI')
             ->once()
             ->with('fake_client_id', 'fake_access_token', 999)
             ->andReturn($response);
