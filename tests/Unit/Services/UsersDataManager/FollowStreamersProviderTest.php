@@ -3,13 +3,14 @@
 namespace Services\UsersDataManager;
 
 use App\Config\JsonReturnMessages;
+use App\Config\TwitchConfig;
 use App\Infrastructure\Clients\APIClient;
 use App\Infrastructure\Clients\DBClient;
 use App\Services\TokenProvider;
 use App\Services\UsersDataManager\FollowStreamersProvider;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
-use GuzzleHttp\Psr7\Response as GuzzleResponse;
+use Illuminate\Http\Client\Response;
+use GuzzleHttp\Psr7\Response as GuzzleResponse; // Importar la clase correcta para Guzzle Response
 use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
@@ -22,6 +23,7 @@ class FollowStreamersProviderTest extends TestCase
     protected MockInterface $dbClient;
     protected MockInterface $apiClient;
     protected MockInterface $tokenProvider;
+    protected MockInterface $twitchConfig;
     protected FollowStreamersProvider $followProvider;
 
     protected function setUp(): void
@@ -31,7 +33,8 @@ class FollowStreamersProviderTest extends TestCase
         $this->dbClient       = Mockery::mock(DBClient::class);
         $this->apiClient      = Mockery::mock(APIClient::class);
         $this->tokenProvider  = Mockery::mock(TokenProvider::class);
-        $this->followProvider = new FollowStreamersProvider($this->dbClient, $this->apiClient, $this->tokenProvider);
+        $this->twitchConfig   = Mockery::mock(TwitchConfig::class);
+        $this->followProvider = new FollowStreamersProvider($this->dbClient, $this->apiClient, $this->tokenProvider, $this->twitchConfig);
     }
 
     protected function tearDown(): void
@@ -42,6 +45,7 @@ class FollowStreamersProviderTest extends TestCase
 
     /**
      * @test
+     * @throws \Exception
      */
     public function given_a_userId_not_found_returns_error_404()
     {
@@ -72,11 +76,18 @@ class FollowStreamersProviderTest extends TestCase
             ->shouldReceive('getToken')
             ->once()
             ->andReturn('fake_access_token');
+        $this->twitchConfig
+            ->shouldReceive('clientId')
+            ->once()
+            ->andReturn('fake_client_id');
+
+        $response = new Response(new GuzzleResponse(200, [], json_encode(['data' => []])));
+
         $this->apiClient
             ->shouldReceive('getDataForStreamersFromAPI')
             ->once()
             ->with('fake_client_id', 'fake_access_token', 999)
-            ->andReturn(new Response(new GuzzleResponse(200, [], json_encode(['data' => []]))));
+            ->andReturn($response);
 
         $response = $this->followProvider->execute(1, 999);
 
