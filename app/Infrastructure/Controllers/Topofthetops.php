@@ -3,12 +3,12 @@
 namespace App\Infrastructure\Controllers;
 
 use App\Services\TopsOfTheTopsDataManager\TopGamesProvider;
+use App\Services\TopsOfTheTopsDataManager\topOfTheTopsDBProvider;
 use App\Services\TopsOfTheTopsDataManager\TopVideosProvider;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Services\Topofthetops_BBDD;
 
 /**
  * @SuppressWarnings(PHPMD.StaticAccess)
@@ -17,11 +17,13 @@ class Topofthetops
 {
     private TopGamesProvider $topGamesProvider;
     private TopVideosProvider $topVideosProvider;
+    private topOfTheTopsDBProvider $topsDBProvider;
 
-    public function __construct(TopGamesProvider $topGamesProvider, TopVideosProvider $topVideosProvider)
+    public function __construct(TopGamesProvider $topGamesProvider, TopVideosProvider $topVideosProvider, topOfTheTopsDBProvider $topsDBProvider)
     {
         $this->topGamesProvider  = $topGamesProvider;
         $this->topVideosProvider = $topVideosProvider;
+        $this->topsDBProvider    = $topsDBProvider;
     }
 
     /**
@@ -78,6 +80,10 @@ class Topofthetops
             // Handle exceptions from video updates, maybe log them or handle differently
             throw new Exception("Error updating videos for game ID $gameId: " . $e->getMessage());
         }
-        Topofthetops_BBDD::updateTopOfTheTops($gameId);
+        try {
+            $this->topsDBProvider->updateTopOfTheTops($gameId);
+        } catch (Exception $e) {
+            throw new Exception("Error updating top of the tops for game ID $gameId: " . $e->getMessage());
+        }
     }
 }
