@@ -2,10 +2,11 @@
 
 namespace App\Infrastructure\Controllers;
 
+use App\Services\TopsOfTheTopsDataManager\TopGamesProvider;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Services\Top_games;
 use App\Services\Top_videos;
 use App\Services\Topofthetops_BBDD;
 
@@ -14,11 +15,22 @@ use App\Services\Topofthetops_BBDD;
  */
 class Topofthetops
 {
+    private TopGamesProvider $topGamesProvider;
+
+    public function __construct(TopGamesProvider $topGamesProvider)
+    {
+        $this->topGamesProvider = $topGamesProvider;
+    }
     public function getTopOfTheTops(Request $request): JsonResponse
     {
-        $since = $request->input('since', 600); // Default to 600 seconds (10 minutes)
+        $since = $request->input('since', 600);
 
-        Top_games::updateTopGames();
+        try {
+            $this->topGamesProvider->updateTopGames();
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        }
+
         $tableIsEmpty = DB::table('topofthetops')->count() == 0;
 
         $topGames = DB::table('top_games')->select('game_id')->get();

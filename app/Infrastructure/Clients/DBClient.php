@@ -6,6 +6,7 @@ use App\Models\Token;
 use App\Models\Streamers;
 use App\Models\TwitchUser;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @SuppressWarnings(PHPMD.StaticAccess)
@@ -90,4 +91,15 @@ class DBClient
         $user->streamers()->attach($streamerId);
     }
 
+    public function updateTopGamesData(array $gamesData): void
+    {
+        DB::table('top_games')->truncate();
+
+        foreach ($gamesData as $game) {
+            DB::table('top_games')->updateOrInsert(
+                ['game_id' => $game['id']],
+                ['game_name' => $game['name']]
+            );
+        }
+    }
 }
