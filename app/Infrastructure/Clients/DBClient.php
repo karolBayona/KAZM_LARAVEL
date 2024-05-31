@@ -102,4 +102,23 @@ class DBClient
             );
         }
     }
+
+    public function updateOrInsertTopVideosData(array $videosData, $gameId): void
+    {
+        DB::table('top_videos')->truncate();
+
+        foreach ($videosData as $video) {
+            DB::table('top_videos')->updateOrInsert(
+                ['game_id' => $gameId, 'video_id' => $video['id']],
+                [
+                    'video_title' => $video['title'],
+                    'video_views' => $video['view_count'],
+                    'user_name'   => $video['user_name'],
+                    'duration'    => $video['duration'],
+                    'created_at'  => $video['created_at'],
+                ]
+            );
+        }
+    }
+
 }

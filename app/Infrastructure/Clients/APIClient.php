@@ -44,4 +44,17 @@ class APIClient
             'Authorization' => 'Bearer ' . $accessToken,
         ])->get('https://api.twitch.tv/helix/games/top?first=3');
     }
+
+    public function getDataForVideosFromAPI(mixed $clientID, mixed $accessToken, string $gameId): PromiseInterface|Response
+    {
+        $videos_url = 'https://api.twitch.tv/helix/videos';
+        return Http::withHeaders([
+            'Client-ID'     => $clientID,
+            'Authorization' => 'Bearer ' . $accessToken,
+        ])->get($videos_url, [
+            'game_id' => $gameId,
+            'first'   => 40,
+            'sort'    => 'views'
+        ]);
+    }
 }

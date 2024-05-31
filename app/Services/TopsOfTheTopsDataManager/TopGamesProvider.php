@@ -30,19 +30,19 @@ class TopGamesProvider
      */
     public function updateTopGames(): void
     {
-        $accessToken = $this->tokenProvider->getToken();
-        $clientId    = $this->twitchConfig->clientId();
-        $data        = $this->apiClient->getDataForGamesFromAPI($clientId, $accessToken);
+        $accessToken    = $this->tokenProvider->getToken();
+        $clientId       = $this->twitchConfig->clientId();
+        $games_response = $this->apiClient->getDataForGamesFromAPI($clientId, $accessToken);
 
-        if (!$data->successful()) {
+        if (!$games_response->successful()) {
             throw new Exception(JsonReturnMessages::TOP_GAMES_SERVER_ERROR_503);
         }
 
-        $games = $data->json()['data'];
-        if (empty($games)) {
+        $games_data = $games_response->json()['data'];
+        if (empty($games_data)) {
             throw new Exception(JsonReturnMessages::TOP_GAMES_NOT_FOUND_404);
         }
 
-        $this->dbClient->updateTopGamesData($games);
+        $this->dbClient->updateTopGamesData($games_data);
     }
 }

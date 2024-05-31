@@ -19,8 +19,10 @@ class JsonReturnMessages
     public const FOLLOW_STREAMERS_SERVER_ERROR_500                = 'Error del servidor al seguir al streamer';
     public const FOLLOW_STREAMER_SUCCESFUL_RESPONSE_200           = 'Ahora sigues a streamerId';
 
-    public const TOP_GAMES_SERVER_ERROR_503 = 'Error al obtener datos de la API de Twitch';
+    public const TOP_GAMES_SERVER_ERROR_503 = 'Error al obtener datos sobre los top3 juegos de la API de Twitch';
     public const TOP_GAMES_NOT_FOUND_404    = 'No se encontraron juegos en la respuesta de la API de Twitch';
 
-    public const TOP_GAMES_SUCCESSFUL_UPDATE_200 = 'Juegos actualizados con éxito';
+    public const TOP_VIDEOS_SERVER_ERROR_503 = 'Error al obtener datos sobre los top40 videos de la API de Twitch';
+    public const TOP_VIDEOS_NOT_FOUND_404    = 'No se encontraron videos en la respuesta de la API de Twitch';
+
 }

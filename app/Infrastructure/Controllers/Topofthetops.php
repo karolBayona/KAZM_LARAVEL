@@ -3,11 +3,11 @@
 namespace App\Infrastructure\Controllers;
 
 use App\Services\TopsOfTheTopsDataManager\TopGamesProvider;
+use App\Services\TopsOfTheTopsDataManager\TopVideosProvider;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Services\Top_videos;
 use App\Services\Topofthetops_BBDD;
 
 /**
@@ -16,11 +16,17 @@ use App\Services\Topofthetops_BBDD;
 class Topofthetops
 {
     private TopGamesProvider $topGamesProvider;
+    private TopVideosProvider $topVideosProvider;
 
-    public function __construct(TopGamesProvider $topGamesProvider)
+    public function __construct(TopGamesProvider $topGamesProvider, TopVideosProvider $topVideosProvider)
     {
-        $this->topGamesProvider = $topGamesProvider;
+        $this->topGamesProvider  = $topGamesProvider;
+        $this->topVideosProvider = $topVideosProvider;
     }
+
+    /**
+     * @throws Exception
+     */
     public function getTopOfTheTops(Request $request): JsonResponse
     {
         $since = $request->input('since', 600);
@@ -61,9 +67,17 @@ class Topofthetops
         return response()->json($data, 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 
+    /**
+     * @throws Exception
+     */
     private function updateGameData($gameId): void
     {
-        Top_videos::updateTopVideos($gameId);
+        try {
+            $this->topVideosProvider->updateTopVideos($gameId);
+        } catch (Exception $e) {
+            // Handle exceptions from video updates, maybe log them or handle differently
+            throw new Exception("Error updating videos for game ID $gameId: " . $e->getMessage());
+        }
         Topofthetops_BBDD::updateTopOfTheTops($gameId);
     }
 }
