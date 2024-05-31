@@ -18,4 +18,10 @@ class JsonReturnMessages
     public const FOLLOW_STREAMERS_CONFLICT_409                    = 'El usuario ya está siguiendo al streamer';
     public const FOLLOW_STREAMERS_SERVER_ERROR_500                = 'Error del servidor al seguir al streamer';
     public const FOLLOW_STREAMER_SUCCESFUL_RESPONSE_200           = 'Ahora sigues a streamerId';
+
+    public const UNFOLLOW_STREAMER_PARAMETER_MISSING_OR_INVALID_400 = 'Usuario o Streamer no proporcionado';
+    public const UNFOLLOW_TREAMERS_SERVER_ERROR_500                 = 'Error del servidor al seguir al streamer';
+    public const UNFOLLOW_STREAMERS_CONFLICT_409                    = 'El usuario no sigue al streamer';
+    public const UNFOLLOW_STREAMER_SUCCESFUL_RESPONSE_200           = 'Dejaste de seguir a streamerId';
+
 }
