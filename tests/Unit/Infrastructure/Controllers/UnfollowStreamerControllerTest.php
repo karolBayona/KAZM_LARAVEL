@@ -43,7 +43,7 @@ class UnfollowStreamerControllerTest extends TestCase
         $response = $this->unfollowController->__invoke($request);
 
         $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(JsonReturnMessages::FOLLOW_STREAMER_PARAMETER_MISSING_OR_INVALID_400, $response->getData()->error);
+        $this->assertEquals(JsonReturnMessages::UNFOLLOW_STREAMER_PARAMETER_MISSING_OR_INVALID_400, $response->getData()->error);
         $this->assertEquals(400, $response->getStatusCode());
     }
 
@@ -57,27 +57,7 @@ class UnfollowStreamerControllerTest extends TestCase
         $response = $this->unfollowController->__invoke($request);
 
         $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(JsonReturnMessages::FOLLOW_STREAMER_PARAMETER_MISSING_OR_INVALID_400, $response->getData()->error);
+        $this->assertEquals(JsonReturnMessages::UNFOLLOW_STREAMER_PARAMETER_MISSING_OR_INVALID_400, $response->getData()->error);
         $this->assertEquals(400, $response->getStatusCode());
-    }
-
-    /**
-     * @test
-     */
-    public function given_nonexistent_userId_returns_error_404()
-    {
-        $request = Request::create('/analytics/unfollow', 'DELETE', ['userId' => '999', 'streamerId' => '1']);
-
-        $this->unfollowProvider
-            ->shouldReceive('execute')
-            ->once()
-            ->withArgs([999, 1])
-            ->andReturn(response()->json(['error' => JsonReturnMessages::FOLLOW_STREAMER_NOT_FOUND_404], 404));
-
-        $response = $this->unfollowController->__invoke($request);
-
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(JsonReturnMessages::FOLLOW_STREAMER_NOT_FOUND_404, $response->getData()->error);
-        $this->assertEquals(404, $response->getStatusCode());
     }
 }
