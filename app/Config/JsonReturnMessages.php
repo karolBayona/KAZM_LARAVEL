@@ -24,4 +24,10 @@ class JsonReturnMessages
     public const UNFOLLOW_STREAMERS_CONFLICT_409                    = 'El usuario no sigue al streamer';
     public const UNFOLLOW_STREAMER_SUCCESFUL_RESPONSE_200           = 'Dejaste de seguir a streamerId';
     public const UNFOLLOW_STREAMER_USER_NOT_FOUND_404               = 'El usuario ( userId ) especificado no existe en la API';
+    
+    public const TOP_GAMES_SERVER_ERROR_503 = 'Error al obtener datos sobre los top3 juegos de la API de Twitch';
+    public const TOP_GAMES_NOT_FOUND_404    = 'No se encontraron juegos en la respuesta de la API de Twitch';
+
+    public const TOP_VIDEOS_SERVER_ERROR_503 = 'Error al obtener datos sobre los top40 videos de la API de Twitch';
+    public const TOP_VIDEOS_NOT_FOUND_404    = 'No se encontraron videos en la respuesta de la API de Twitch';
 }

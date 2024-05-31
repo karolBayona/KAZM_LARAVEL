@@ -2,23 +2,43 @@
 
 namespace App\Infrastructure\Controllers;
 
+use App\Services\TopsOfTheTopsDataManager\TopGamesProvider;
+use App\Services\TopsOfTheTopsDataManager\topOfTheTopsDBProvider;
+use App\Services\TopsOfTheTopsDataManager\TopVideosProvider;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Services\Top_games;
-use App\Services\Top_videos;
-use App\Services\Topofthetops_BBDD;
 
 /**
  * @SuppressWarnings(PHPMD.StaticAccess)
  */
 class Topofthetops
 {
+    private TopGamesProvider $topGamesProvider;
+    private TopVideosProvider $topVideosProvider;
+    private topOfTheTopsDBProvider $topsDBProvider;
+
+    public function __construct(TopGamesProvider $topGamesProvider, TopVideosProvider $topVideosProvider, topOfTheTopsDBProvider $topsDBProvider)
+    {
+        $this->topGamesProvider  = $topGamesProvider;
+        $this->topVideosProvider = $topVideosProvider;
+        $this->topsDBProvider    = $topsDBProvider;
+    }
+
+    /**
+     * @throws Exception
+     */
     public function getTopOfTheTops(Request $request): JsonResponse
     {
-        $since = $request->input('since', 600); // Default to 600 seconds (10 minutes)
+        $since = $request->input('since', 600);
 
-        Top_games::updateTopGames();
+        try {
+            $this->topGamesProvider->updateTopGames();
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        }
+
         $tableIsEmpty = DB::table('topofthetops')->count() == 0;
 
         $topGames = DB::table('top_games')->select('game_id')->get();
@@ -49,9 +69,21 @@ class Topofthetops
         return response()->json($data, 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 
+    /**
+     * @throws Exception
+     */
     private function updateGameData($gameId): void
     {
-        Top_videos::updateTopVideos($gameId);
-        Topofthetops_BBDD::updateTopOfTheTops($gameId);
+        try {
+            $this->topVideosProvider->updateTopVideos($gameId);
+        } catch (Exception $e) {
+            // Handle exceptions from video updates, maybe log them or handle differently
+            throw new Exception("Error updating videos for game ID $gameId: " . $e->getMessage());
+        }
+        try {
+            $this->topsDBProvider->updateTopOfTheTops($gameId);
+        } catch (Exception $e) {
+            throw new Exception("Error updating top of the tops for game ID $gameId: " . $e->getMessage());
+        }
     }
 }
