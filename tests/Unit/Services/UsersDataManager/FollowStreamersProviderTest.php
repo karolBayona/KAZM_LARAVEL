@@ -235,7 +235,7 @@ class FollowStreamersProviderTest extends TestCase
         $response = $this->followProvider->execute(1, 999);
 
         $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(['message' => JsonReturnMessages::FOLLOW_STREAMER_SUCCESFUL_RESPONSE_200], $response->getData(true));
+        $this->assertEquals(['message' => JsonReturnMessages::FOLLOW_STREAMER_SUCCESSFUL_RESPONSE_200], $response->getData(true));
         $this->assertEquals(200, $response->getStatusCode());
     }
 }
