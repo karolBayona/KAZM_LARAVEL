@@ -23,5 +23,5 @@ class JsonReturnMessages
     public const UNFOLLOW_TREAMERS_SERVER_ERROR_500                 = 'Error del servidor al seguir al streamer';
     public const UNFOLLOW_STREAMERS_CONFLICT_409                    = 'El usuario no sigue al streamer';
     public const UNFOLLOW_STREAMER_SUCCESFUL_RESPONSE_200           = 'Dejaste de seguir a streamerId';
-
+    public const UNFOLLOW_STREAMER_USER_NOT_FOUND_404               = 'El usuario ( userId ) especificado no existe en la API';
 }
