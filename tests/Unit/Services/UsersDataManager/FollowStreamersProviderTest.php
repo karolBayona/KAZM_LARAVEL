@@ -51,7 +51,7 @@ class FollowStreamersProviderTest extends TestCase
     public function given_a_userId_not_found_returns_error_404()
     {
         $this->dbClient
-            ->expects('doesTwitchUserExist')
+            ->expects('doesTwitchUserIdExist')
             ->once()
             ->with(999)
             ->andReturn(false);
@@ -70,7 +70,7 @@ class FollowStreamersProviderTest extends TestCase
     public function given_a_streamerId_not_found_returns_error_404()
     {
         $this->dbClient
-            ->expects('doesTwitchUserExist')
+            ->expects('doesTwitchUserIdExist')
             ->once()
             ->with(1)
             ->andReturn(true);
@@ -105,7 +105,7 @@ class FollowStreamersProviderTest extends TestCase
     public function test_given_user_already_follows_streamer_returns_error_409()
     {
         $this->dbClient
-            ->expects('doesTwitchUserExist')
+            ->expects('doesTwitchUserIdExist')
             ->once()
             ->with(1)
             ->andReturn(true);
@@ -145,7 +145,7 @@ class FollowStreamersProviderTest extends TestCase
     public function given_invalid_token_should_return_unauthorized()
     {
         $this->dbClient
-            ->expects('doesTwitchUserExist')
+            ->expects('doesTwitchUserIdExist')
             ->once()
             ->with(1)
             ->andReturn(true);
@@ -169,7 +169,7 @@ class FollowStreamersProviderTest extends TestCase
     public function given_server_error_returns_error_500()
     {
         $this->dbClient
-            ->expects('doesTwitchUserExist')
+            ->expects('doesTwitchUserIdExist')
             ->once()
             ->with(1)
             ->andReturn(true);
@@ -201,7 +201,7 @@ class FollowStreamersProviderTest extends TestCase
     public function given_valid_user_and_streamer_returns_success_200()
     {
         $this->dbClient
-            ->expects('doesTwitchUserExist')
+            ->expects('doesTwitchUserIdExist')
             ->once()
             ->with(1)
             ->andReturn(true);
@@ -235,7 +235,7 @@ class FollowStreamersProviderTest extends TestCase
         $response = $this->followProvider->execute(1, 999);
 
         $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(['message' => JsonReturnMessages::FOLLOW_STREAMER_SUCCESFUL_RESPONSE_200], $response->getData(true));
+        $this->assertEquals(['message' => JsonReturnMessages::FOLLOW_STREAMER_SUCCESSFUL_RESPONSE_200], $response->getData(true));
         $this->assertEquals(200, $response->getStatusCode());
     }
 }
