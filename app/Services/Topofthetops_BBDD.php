@@ -50,8 +50,8 @@ class Topofthetops_BBDD
 
         $updateOrInsertResult = DB::table('topofthetops')
             ->updateOrInsert(
-                ['game_id' => $gameId], // Check condition
-                $fields   // Fields to update or insert
+                ['game_id' => $gameId],
+                $fields
             );
 
         if ($updateOrInsertResult) {

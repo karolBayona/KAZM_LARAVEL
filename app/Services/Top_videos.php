@@ -10,8 +10,8 @@ class Top_videos
     public static function updateTopVideos($gameId): string
     {
         // API parameters
-        $client_id = 'ry2x90s1y7srrwh89y6twcxfz0gi8u';
-        $token     = 's1q53moenjf7gigkq4lhkvw9mvfkmo';
+        $client_id = '8sjfuizn8p9ee61m0rpd5rxg1kopfg';
+        $token     = '1d1t8kep6peq3ikacbpu1t19j5443v';
 
         // Twitch API URL for fetching videos of a specific game
         $videos_url = 'https://api.twitch.tv/helix/videos';
