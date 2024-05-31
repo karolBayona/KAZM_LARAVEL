@@ -6,11 +6,11 @@ use App\Models\Token;
 use App\Models\Streamers;
 use App\Models\TwitchUser;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @SuppressWarnings(PHPMD.StaticAccess)
  */
-
 class DBClient
 {
     public function __construct()
@@ -82,10 +82,9 @@ class DBClient
 
     public function doesUserFollowStreamer(int $userId, int $streamerId): bool
     {
-        return TwitchUser::where('user_id', $userId)
-            ->whereHas('streamers', function ($query) use ($streamerId) {
-                $query->where('twitch_streamers.streamer_id', $streamerId);
-            })
+        return DB::table('twitch_user_streamers')
+            ->where('user_id', $userId)
+            ->where('streamer_id', $streamerId)
             ->exists();
     }
 
