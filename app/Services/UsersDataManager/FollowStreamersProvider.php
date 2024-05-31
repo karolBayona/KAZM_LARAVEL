@@ -31,7 +31,7 @@ class FollowStreamersProvider
      */
     public function execute(int $userId, int $streamerId): JsonResponse
     {
-        if (!$this->dbClient->doesTwitchUserExist($userId)) {
+        if (!$this->dbClient->doesTwitchUserIdExist($userId)) {
             return response()->json(['error' => JsonReturnMessages::FOLLOW_STREAMER_NOT_FOUND_404], 404);
         }
 
@@ -61,6 +61,6 @@ class FollowStreamersProvider
 
         $this->dbClient->followStreamer($userId, $streamerId);
 
-        return response()->json(['message' => JsonReturnMessages::FOLLOW_STREAMER_SUCCESFUL_RESPONSE_200], 200);
+        return response()->json(['message' => JsonReturnMessages::FOLLOW_STREAMER_SUCCESFUL_RESPONSE_200]);
     }
 }

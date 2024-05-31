@@ -75,11 +75,16 @@ class DBClient
         })->toArray();
     }
 
+    public function doesTwitchUserIdExist(int $userId): bool
+    {
+        return TwitchUser::find($userId) !== null;
+    }
+
     public function doesUserFollowStreamer(int $userId, int $streamerId): bool
     {
         return TwitchUser::where('user_id', $userId)
             ->whereHas('streamers', function ($query) use ($streamerId) {
-                $query->where('streamer_id', $streamerId);
+                $query->where('twitch_streamers.streamer_id', $streamerId);
             })
             ->exists();
     }
@@ -87,7 +92,8 @@ class DBClient
     public function followStreamer(int $userId, int $streamerId): void
     {
         $user = TwitchUser::findOrFail($userId);
-        $user->streamers()->attach($streamerId);
+        if (!$this->doesUserFollowStreamer($userId, $streamerId)) {
+            $user->streamers()->attach($streamerId, ['followed_at' => now()]);
+        }
     }
-
 }
