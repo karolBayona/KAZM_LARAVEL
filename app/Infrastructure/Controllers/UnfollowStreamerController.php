@@ -25,5 +25,6 @@ class UnfollowStreamerController
             return response()->json(['error' => JsonReturnMessages::FOLLOW_STREAMER_PARAMETER_MISSING_OR_INVALID_400], 400);
         }
 
-        return $this->unfollowProvider->execute((int) $user_id, (int) $streamer_id);
+        return $this->unfollowProvider->execute((int)$user_id, (int)$streamer_id);
+    }
 }
