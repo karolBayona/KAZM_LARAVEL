@@ -17,10 +17,10 @@ use Illuminate\Support\Facades\Http;
  */
 class TopVideosServiceTest extends TestCase
 {
-    private $tokenProvider;
-    private $twitchConfig;
-    private $apiClient;
-    private $dbClient;
+    private TokenProvider $tokenProvider;
+    private TwitchConfig $twitchConfig;
+    private APIClient $apiClient;
+    private DBClientTopsOfTheTops $dbClient;
 
     /**
      * @throws Exception
