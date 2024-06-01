@@ -6,6 +6,7 @@ use App\Infrastructure\Controllers\GetUsersListController;
 use App\Infrastructure\Controllers\StreamsController;
 use App\Infrastructure\Controllers\GetStreamersController;
 use App\Infrastructure\Controllers\Topofthetops;
+use App\Infrastructure\Controllers\UnfollowStreamerController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/analytics/streamers', GetStreamersController::class);
@@ -14,3 +15,4 @@ Route::get('/analytics/topsofthetops', [Topofthetops::class, 'getTopOfTheTops'])
 Route::post('/analytics/users', CreateNewUserController::class);
 Route::get('/analytics/users', GetUsersListController::class);
 Route::post('/analytics/follow', FollowStreamerController::class);
+Route::post('/analytics/unfollow', UnfollowStreamerController::class);
