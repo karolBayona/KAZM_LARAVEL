@@ -10,7 +10,6 @@ use App\Infrastructure\Clients\DBClientTopsOfTheTops;
 use App\Services\TokenProvider;
 use App\Config\TwitchConfig;
 use Illuminate\Http\Client\Response;
-use Illuminate\Support\Facades\Http;
 
 /**
  * @SuppressWarnings(PHPMD.StaticAccess)
@@ -28,7 +27,6 @@ class TopGamesServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Http::fake();
 
         $this->tokenProvider = $this->createMock(TokenProvider::class);
         $this->twitchConfig  = $this->createMock(TwitchConfig::class);
