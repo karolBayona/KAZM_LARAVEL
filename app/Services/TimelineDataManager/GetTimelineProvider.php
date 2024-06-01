@@ -9,10 +9,17 @@ use Illuminate\Http\JsonResponse;
 
 class GetTimelineProvider
 {
+    private TwitchUser $twitchUser;
+
+    public function __construct(TwitchUser $twitchUser)
+    {
+        $this->twitchUser = $twitchUser;
+    }
+
     public function execute($userId): JsonResponse
     {
         try {
-            $user = TwitchUser::findOrFail($userId);
+            $user = $this->twitchUser->findOrFail($userId);
 
             $followedStreamers = $user->streamers()->pluck('twitch_streamers.id');
 
