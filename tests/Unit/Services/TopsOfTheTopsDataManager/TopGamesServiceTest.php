@@ -17,10 +17,10 @@ use Illuminate\Support\Facades\Http;
  */
 class TopGamesServiceTest extends TestCase
 {
-    private $tokenProviderMock;
-    private $twitchConfigMock;
-    private $apiClientMock;
-    private $dbClientMock;
+    private $tokenProvider;
+    private $twitchConfig;
+    private $apiClient;
+    private $dbClient;
 
     /**
      * @throws Exception
@@ -30,13 +30,13 @@ class TopGamesServiceTest extends TestCase
         parent::setUp();
         Http::fake();
 
-        $this->tokenProviderMock = $this->createMock(TokenProvider::class);
-        $this->twitchConfigMock  = $this->createMock(TwitchConfig::class);
-        $this->apiClientMock     = $this->createMock(APIClient::class);
-        $this->dbClientMock      = $this->createMock(DBClientTopsOfTheTops::class);
+        $this->tokenProvider = $this->createMock(TokenProvider::class);
+        $this->twitchConfig  = $this->createMock(TwitchConfig::class);
+        $this->apiClient     = $this->createMock(APIClient::class);
+        $this->dbClient      = $this->createMock(DBClientTopsOfTheTops::class);
 
-        $this->tokenProviderMock->method('getToken')->willReturn('fake_token');
-        $this->twitchConfigMock->method('clientId')->willReturn('fake_client_id');
+        $this->tokenProvider->method('getToken')->willReturn('fake_token');
+        $this->twitchConfig->method('clientId')->willReturn('fake_client_id');
     }
 
     /**
@@ -50,10 +50,10 @@ class TopGamesServiceTest extends TestCase
         $responseMock->method('successful')->willReturn(true);
         $responseMock->method('json')->willReturn(['data' => [['id' => '123', 'name' => 'GameName']]]);
 
-        $this->apiClientMock->method('getDataForGamesFromAPI')->willReturn($responseMock);
-        $this->dbClientMock->expects($this->once())->method('updateTopGamesData')->with($this->equalTo([['id' => '123', 'name' => 'GameName']]));
+        $this->apiClient->method('getDataForGamesFromAPI')->willReturn($responseMock);
+        $this->dbClient->expects($this->once())->method('updateTopGamesData')->with($this->equalTo([['id' => '123', 'name' => 'GameName']]));
 
-        $service = new TopGamesService($this->tokenProviderMock, $this->twitchConfigMock, $this->apiClientMock, $this->dbClientMock);
+        $service = new TopGamesService($this->tokenProvider, $this->twitchConfig, $this->apiClient, $this->dbClient);
         $service->updateTopGames();
     }
 
@@ -67,11 +67,11 @@ class TopGamesServiceTest extends TestCase
         $responseMock->method('successful')->willReturn(true);
         $responseMock->method('json')->willReturn(['data' => []]);
 
-        $this->apiClientMock->method('getDataForGamesFromAPI')->willReturn($responseMock);
+        $this->apiClient->method('getDataForGamesFromAPI')->willReturn($responseMock);
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('No se encontraron juegos en la respuesta de la API de Twitch');
 
-        $service = new TopGamesService($this->tokenProviderMock, $this->twitchConfigMock, $this->apiClientMock, $this->dbClientMock);
+        $service = new TopGamesService($this->tokenProvider, $this->twitchConfig, $this->apiClient, $this->dbClient);
         $service->updateTopGames();
     }
 
@@ -84,11 +84,11 @@ class TopGamesServiceTest extends TestCase
         $responseMock = $this->createMock(Response::class);
         $responseMock->method('successful')->willReturn(false);
 
-        $this->apiClientMock->method('getDataForGamesFromAPI')->willReturn($responseMock);
+        $this->apiClient->method('getDataForGamesFromAPI')->willReturn($responseMock);
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Error al obtener datos sobre los top3 juegos de la API de Twitch');
 
-        $service = new TopGamesService($this->tokenProviderMock, $this->twitchConfigMock, $this->apiClientMock, $this->dbClientMock);
+        $service = new TopGamesService($this->tokenProvider, $this->twitchConfig, $this->apiClient, $this->dbClient);
         $service->updateTopGames();
     }
 
