@@ -60,6 +60,6 @@ class FollowStreamersProvider
 
         $this->dbClient->followStreamer($userId, $streamerId);
 
-        return response()->json(['message' => JsonReturnMessages::FOLLOW_STREAMER_SUCCESSFUL_RESPONSE_200], 200, [], JSON_UNESCAPED_UNICODE);
+        return response()->json(['message' => JsonReturnMessages::FOLLOW_STREAMER_SUCCESSFUL_RESPONSE_200], 200);
     }
 }
