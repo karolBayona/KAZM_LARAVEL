@@ -26,5 +26,4 @@ class UnfollowStreamerController
         }
 
         return $this->unfollowProvider->execute((int) $user_id, (int) $streamer_id);
-    }
 }
