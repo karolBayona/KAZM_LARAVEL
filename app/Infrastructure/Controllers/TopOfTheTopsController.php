@@ -28,8 +28,14 @@ class TopOfTheTopsController
         try {
             $data = $this->dataProvider->getTopData($request);
             return response()->json($data, 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-        } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: 400);
+        } catch (Exception $exception) {
+            $statusCode = $exception->getCode();
+            if ($statusCode == 404) {
+                return response()->json(['error' => $exception->getMessage()], 404);
+            } elseif ($statusCode == 503) {
+                return response()->json(['error' => $exception->getMessage()], 503);
+            }
+            return response()->json(['error' => $exception->getMessage()], $statusCode ?: 400);
         }
     }
 }

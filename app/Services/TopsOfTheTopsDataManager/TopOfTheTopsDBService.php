@@ -22,17 +22,17 @@ class TopOfTheTopsDBService
     {
         $gameName = $this->dbClient->getTopGameData($gameId);
         if (!$gameName) {
-            throw new Exception(JsonReturnMessages::GAME_NAME_NOT_FOUND_404);
+            throw new Exception(JsonReturnMessages::GAME_NAME_NOT_FOUND_404, 404);
         }
 
         $topData = $this->dbClient->getTopDataForGame($gameId);
         if (!$topData) {
-            throw new Exception(JsonReturnMessages::TOP_DATA_NOT_FOUND_404);
+            throw new Exception(JsonReturnMessages::TOP_DATA_NOT_FOUND_404, 404);
         }
 
         $videoDetails = $this->dbClient->getVideoDetailsForTopGame($topData->user_name, $gameId, $topData->most_viewed_views);
         if (!$videoDetails) {
-            throw new Exception(JsonReturnMessages::VIDEO_DETAILS_NOT_FOUND_404);
+            throw new Exception(JsonReturnMessages::VIDEO_DETAILS_NOT_FOUND_404, 404);
         }
 
         $fields = [
