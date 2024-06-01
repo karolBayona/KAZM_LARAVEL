@@ -34,8 +34,6 @@ class TopOfTheTopsDataProvider
         $this->dbClient->checkAndUpdateGames($tableIsEmpty, $since, function ($gameId) {
             $this->updateGameData($gameId);
         });
-
-        // Recuperar y devolver los datos actualizados de 'topofthetops'.
         return $this->dbClient->fetchAllTopOfTheTopsData();
     }
 

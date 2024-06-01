@@ -35,12 +35,12 @@ use Exception;
         $videos_response = $this->apiClient->getDataForVideosFromAPI($clientId, $accessToken, $gameId);
 
         if (!$videos_response->successful()) {
-            throw new Exception(JsonReturnMessages::TOP_VIDEOS_SERVER_ERROR_503);
+            throw new Exception(JsonReturnMessages::TOP_VIDEOS_SERVER_ERROR_503, 503);
         }
 
         $videos_data = $videos_response->json()['data'];
         if (empty($videos_data)) {
-            throw new Exception(JsonReturnMessages::TOP_VIDEOS_NOT_FOUND_404);
+            throw new Exception(JsonReturnMessages::TOP_VIDEOS_NOT_FOUND_404, 404);
         }
 
         $this->dbClient->updateOrInsertTopVideosData($videos_data, $gameId);
