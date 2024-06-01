@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\DB;
 /**
  * @SuppressWarnings(PHPMD.StaticAccess)
  */
-
 class DBClient
 {
     public function __construct()
@@ -76,18 +75,24 @@ class DBClient
         })->toArray();
     }
 
+    public function doesTwitchUserIdExist(int $userId): bool
+    {
+        return TwitchUser::find($userId) !== null;
+    }
+
     public function doesUserFollowStreamer(int $userId, int $streamerId): bool
     {
-        return TwitchUser::where('user_id', $userId)
-            ->whereHas('streamers', function ($query) use ($streamerId) {
-                $query->where('streamer_id', $streamerId);
-            })
+        return DB::table('twitch_user_streamers')
+            ->where('user_id', $userId)
+            ->where('streamer_id', $streamerId)
             ->exists();
     }
 
     public function followStreamer(int $userId, int $streamerId): void
     {
         $user = TwitchUser::findOrFail($userId);
-        $user->streamers()->attach($streamerId);
+        if (!$this->doesUserFollowStreamer($userId, $streamerId)) {
+            $user->streamers()->attach($streamerId, ['followed_at' => now()]);
+        }
     }
 }
