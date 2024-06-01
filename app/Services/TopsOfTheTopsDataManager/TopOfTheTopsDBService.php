@@ -2,14 +2,15 @@
 
 namespace App\Services\TopsOfTheTopsDataManager;
 
-use App\Infrastructure\Clients\DBClient;
+use App\Config\JsonReturnMessages;
+use App\Infrastructure\Clients\DBClientTopsOfTheTops;
 use Exception;
 
-class topOfTheTopsDBProvider
+class TopOfTheTopsDBService
 {
-    private DBClient $dbClient;
+    private DBClientTopsOfTheTops $dbClient;
 
-    public function __construct(DBClient $dbClient)
+    public function __construct(DBClientTopsOfTheTops $dbClient)
     {
         $this->dbClient = $dbClient;
     }
@@ -21,17 +22,17 @@ class topOfTheTopsDBProvider
     {
         $gameName = $this->dbClient->getTopGameData($gameId);
         if (!$gameName) {
-            throw new Exception('No se encontró el nombre del juego para el game_id proporcionado.');
+            throw new Exception(JsonReturnMessages::GAME_NAME_NOT_FOUND_404);
         }
 
         $topData = $this->dbClient->getTopDataForGame($gameId);
         if (!$topData) {
-            throw new Exception('No se encontraron datos para el game_id proporcionado en la tabla top_videos.');
+            throw new Exception(JsonReturnMessages::TOP_DATA_NOT_FOUND_404);
         }
 
         $videoDetails = $this->dbClient->getVideoDetailsForTopGame($topData->user_name, $gameId, $topData->most_viewed_views);
         if (!$videoDetails) {
-            throw new Exception('No se encontraron detalles de videos para el game_id proporcionado.');
+            throw new Exception(JsonReturnMessages::VIDEO_DETAILS_NOT_FOUND_404);
         }
 
         $fields = [
@@ -46,8 +47,6 @@ class topOfTheTopsDBProvider
             'most_viewed_created_at' => $videoDetails->created_at,
             'last_updated_at'        => now()
         ];
-
         $this->dbClient->updateTopOfTheTopsTable($gameId, $fields);
     }
-
 }

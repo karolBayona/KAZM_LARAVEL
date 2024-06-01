@@ -25,4 +25,8 @@ class JsonReturnMessages
     public const TOP_VIDEOS_SERVER_ERROR_503 = 'Error al obtener datos sobre los top40 videos de la API de Twitch';
     public const TOP_VIDEOS_NOT_FOUND_404    = 'No se encontraron videos en la respuesta de la API de Twitch';
 
+    public const GAME_NAME_NOT_FOUND_404     = 'No se encontró el nombre del juego para el game_id proporcionado';
+    public const TOP_DATA_NOT_FOUND_404      = 'No se encontraron datos para el game_id proporcionado en la tabla top_videos';
+    public const VIDEO_DETAILS_NOT_FOUND_404 = 'No se encontraron detalles de videos para el game_id proporcionado';
+
 }

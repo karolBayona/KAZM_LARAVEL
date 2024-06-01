@@ -2,20 +2,22 @@
 
 namespace App\Services\TopsOfTheTopsDataManager;
 
+use AllowDynamicProperties;
 use App\Config\JsonReturnMessages;
 use App\Config\TwitchConfig;
 use App\Infrastructure\Clients\APIClient;
-use App\Infrastructure\Clients\DBClient;
+
+use App\Infrastructure\Clients\DBClientTopsOfTheTops;
 use App\Services\TokenProvider;
 use Exception;
 
-class TopVideosProvider
+#[AllowDynamicProperties] class TopVideosService
 {
     private APIClient $apiClient;
-    private DBClient $dbClient;
+    private DBClientTopsOfTheTops $dbClient;
     private TokenProvider $tokenProvider;
 
-    public function __construct(TokenProvider $tokenProvider, TwitchConfig $twitchConfig, APIClient $apiClient, DBClient $dbClient)
+    public function __construct(TokenProvider $tokenProvider, TwitchConfig $twitchConfig, APIClient $apiClient, DBClientTopsOfTheTops $dbClient)
     {
         $this->tokenProvider = $tokenProvider;
         $this->twitchConfig  = $twitchConfig;

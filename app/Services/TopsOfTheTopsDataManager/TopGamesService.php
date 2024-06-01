@@ -2,20 +2,21 @@
 
 namespace App\Services\TopsOfTheTopsDataManager;
 
+use AllowDynamicProperties;
 use App\Config\JsonReturnMessages;
 use App\Config\TwitchConfig;
 use App\Infrastructure\Clients\APIClient;
-use App\Infrastructure\Clients\DBClient;
+use App\Infrastructure\Clients\DBClientTopsOfTheTops;
 use App\Services\TokenProvider;
 use Exception;
 
-class TopGamesProvider
+#[AllowDynamicProperties] class TopGamesService
 {
     private APIClient $apiClient;
-    private DBClient $dbClient;
+    private DBClientTopsOfTheTops $dbClient;
     private TokenProvider $tokenProvider;
 
-    public function __construct(TokenProvider $tokenProvider, TwitchConfig $twitchConfig, APIClient $apiClient, DBClient $dbClient)
+    public function __construct(TokenProvider $tokenProvider, TwitchConfig $twitchConfig, APIClient $apiClient, DBClientTopsOfTheTops $dbClient)
     {
         $this->tokenProvider = $tokenProvider;
         $this->twitchConfig  = $twitchConfig;
@@ -35,12 +36,12 @@ class TopGamesProvider
         $games_response = $this->apiClient->getDataForGamesFromAPI($clientId, $accessToken);
 
         if (!$games_response->successful()) {
-            throw new Exception(JsonReturnMessages::TOP_GAMES_SERVER_ERROR_503);
+            throw new Exception(JsonReturnMessages::TOP_GAMES_SERVER_ERROR_503, 503);
         }
 
         $games_data = $games_response->json()['data'];
         if (empty($games_data)) {
-            throw new Exception(JsonReturnMessages::TOP_GAMES_NOT_FOUND_404);
+            throw new Exception(JsonReturnMessages::TOP_GAMES_NOT_FOUND_404, 404);
         }
 
         $this->dbClient->updateTopGamesData($games_data);
