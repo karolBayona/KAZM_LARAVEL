@@ -40,7 +40,7 @@ class TimelineControllerTest extends TestCase
         $this->timelineProvider
             ->expects('execute')
             ->withArgs([$userId])
-            ->andReturn(response()->json(['error' => 'El usuario especificado no existe.'], 404))
+            ->andReturn(response()->json(['error' => 'El usuario especificado (userId) no existe.'], 404))
             ->once();
 
         $response = $this->timelineController->__invoke($userId);

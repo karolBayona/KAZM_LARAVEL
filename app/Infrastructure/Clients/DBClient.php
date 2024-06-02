@@ -102,4 +102,10 @@ class DBClient
             $user->streamers()->detach($streamerId);
         }
     }
+
+    public function getFollowedStreamerIds($userId): array
+    {
+        $user = TwitchUser::findOrFail($userId);
+        return $user->streamer_ids;
+    }
 }
