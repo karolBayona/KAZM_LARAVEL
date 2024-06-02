@@ -56,7 +56,7 @@ class UnfollowStreamersProviderTest extends TestCase
      * @test
      * @throws Exception
      */
-    public function given_a_streamerId_not_found_returns_error_409()
+    public function given_a_streamerId_which_user_not_follow_return_409()
     {
         $this->dbClient
             ->expects('doesTwitchUserIdExist')
