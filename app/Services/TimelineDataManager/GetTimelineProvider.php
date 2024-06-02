@@ -23,10 +23,10 @@ class GetTimelineProvider
 
     public function __construct(DBClient $dbClient, APIClient $apiClient, TokenProvider $tokenProvider, TwitchConfig $twitchConfig)
     {
-        $this->dbClient = $dbClient;
-        $this->apiClient = $apiClient;
+        $this->dbClient      = $dbClient;
+        $this->apiClient     = $apiClient;
         $this->tokenProvider = $tokenProvider;
-        $this->twitchConfig = $twitchConfig;
+        $this->twitchConfig  = $twitchConfig;
     }
 
     public function execute($userId): JsonResponse
@@ -37,14 +37,14 @@ class GetTimelineProvider
             }
 
             $accessToken = $this->tokenProvider->getToken();
-            $clientId = $this->twitchConfig->clientId();
+            $clientId    = $this->twitchConfig->clientId();
             $streamerIds = $this->dbClient->getFollowedStreamerIds($userId);
-            $streams = [];
+            $streams     = [];
 
             foreach ($streamerIds as $streamerId) {
-                $response = $this->apiClient->getDataForVideosFromAPIForStreamer($clientId, $accessToken, $streamerId);
+                $response         = $this->apiClient->getDataForVideosFromAPIForStreamer($clientId, $accessToken, $streamerId);
                 $serializedVideos = TimelineSerializer::serialize($response['data']);
-                $streams = array_merge($streams, $serializedVideos);
+                $streams          = array_merge($streams, $serializedVideos);
             }
 
             usort($streams, function ($stream1, $stream2) {

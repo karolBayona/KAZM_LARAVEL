@@ -61,12 +61,12 @@ class APIClient
     public function getDataForVideosFromAPIForStreamer($clientID, $accessToken, int $streamerID): array
     {
         $videosUrl = 'https://api.twitch.tv/helix/videos';
-        $response = Http::withHeaders([
-            'Client-ID' => $clientID,
+        $response  = Http::withHeaders([
+            'Client-ID'     => $clientID,
             'Authorization' => 'Bearer ' . $accessToken,
         ])->get($videosUrl, [
             'user_id' => $streamerID,
-            'first' => 5,
+            'first'   => 5,
         ]);
 
         return $response->json();

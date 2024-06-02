@@ -12,7 +12,7 @@ class TimelineSerializer
         $serializedVideos = [];
         foreach ($videos as $video) {
             $serializedVideos[] = [
-                'streamerId' => $video['user_id'],
+                'streamerId'   => $video['user_id'],
                 'streamerName' => $video['user_name'],
                 'title'        => $video['title'],
                 'viewerCount'  => $video['view_count'],
