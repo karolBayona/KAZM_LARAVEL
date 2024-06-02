@@ -13,10 +13,6 @@ use Illuminate\Support\Facades\DB;
  */
 class DBClient
 {
-    public function __construct()
-    {
-    }
-
     public function getTokenDB()
     {
         return Token::latest('created_at')->first();
