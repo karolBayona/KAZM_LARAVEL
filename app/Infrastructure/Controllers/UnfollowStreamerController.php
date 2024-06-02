@@ -4,6 +4,7 @@ namespace App\Infrastructure\Controllers;
 
 use App\Config\JsonReturnMessages;
 use App\Services\UsersDataManager\UnfollowStreamersProvider;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -25,6 +26,10 @@ class UnfollowStreamerController
             return response()->json(['error' => JsonReturnMessages::UNFOLLOW_STREAMER_PARAMETER_MISSING_OR_INVALID_400], 400);
         }
 
-        return $this->unfollowProvider->execute((int) $user_id, (int) $streamer_id);
+        try {
+            return $this->unfollowProvider->execute((int) $user_id, (int) $streamer_id);
+        } catch (Exception) {
+            return response()->json(['error' => JsonReturnMessages::FOLLOW_STREAMERS_SERVER_ERROR_500], 500);
+        }
     }
 }
