@@ -16,7 +16,7 @@ class TimelineSerializer
                 'streamerName' => $video['user_name'],
                 'title'        => $video['title'],
                 'viewerCount'  => $video['view_count'],
-                'created_at'   => $video['created_at'],
+                'startedAt'    => $video['created_at'],
             ];
         }
         return $serializedVideos;
