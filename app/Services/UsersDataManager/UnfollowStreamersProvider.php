@@ -25,6 +25,8 @@ class UnfollowStreamersProvider
             return response()->json(['error' => JsonReturnMessages::UNFOLLOW_STREAMERS_CONFLICT_409], 409);
         }
 
-        return response()->json(['error' => JsonReturnMessages::FOLLOW_STREAMERS_SERVER_ERROR_500], 500);
+        $this->dbClient->unfollowStreamer($userId, $streamerId);
+
+        return response()->json(['message' => JsonReturnMessages::UNFOLLOW_STREAMER_SUCCESFUL_RESPONSE_200], 200);
     }
 }

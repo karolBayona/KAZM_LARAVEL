@@ -76,4 +76,34 @@ class UnfollowStreamersProviderTest extends TestCase
         $this->assertEquals(JsonReturnMessages::UNFOLLOW_STREAMERS_CONFLICT_409, $response->getData()->error);
         $this->assertEquals(409, $response->getStatusCode());
     }
+
+    /**
+     * @test
+     * @throws Exception
+     */
+    public function given_valid_user_and_streamer_returns_success_200()
+    {
+        $this->dbClient
+            ->expects('doesTwitchUserIdExist')
+            ->once()
+            ->with(1)
+            ->andReturn(true);
+
+        $this->dbClient
+            ->expects('doesUserFollowStreamer')
+            ->once()
+            ->with(1, 999)
+            ->andReturn(true);
+
+        $this->dbClient
+            ->expects('unfollowStreamer')
+            ->once()
+            ->with(1, 999);
+
+        $response = $this->unfollowProvider->execute(1, 999);
+
+        $this->assertInstanceOf(JsonResponse::class, $response);
+        $this->assertEquals(['message' => JsonReturnMessages::UNFOLLOW_STREAMER_SUCCESFUL_RESPONSE_200], $response->getData(true));
+        $this->assertEquals(200, $response->getStatusCode());
+    }
 }
