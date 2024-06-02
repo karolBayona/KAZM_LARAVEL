@@ -35,5 +35,7 @@ class JsonReturnMessages
     public const GAME_NAME_NOT_FOUND_404     = 'No se encontró el nombre del juego para el game_id proporcionado';
     public const TOP_DATA_NOT_FOUND_404      = 'No se encontraron datos para el game_id proporcionado en la tabla top_videos';
     public const VIDEO_DETAILS_NOT_FOUND_404 = 'No se encontraron detalles de videos para el game_id proporcionado';
+    public const TIMELINE_SERVER_ERROR_500 = 'Error del servidor al obtener el timeline';
+    public  const USER_NOT_FOUND_404 = 'El usuario especificado ( userId ) no existe.';
 
 }
