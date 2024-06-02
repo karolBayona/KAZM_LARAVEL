@@ -18,4 +18,12 @@ class TwitchUser extends Authenticatable
     {
         return $this->belongsToMany(TwitchStreamer::class, 'twitch_user_streamers', 'user_id', 'streamer_id')->withTimestamps();
     }
+    public function followedStreamers()
+    {
+        return $this->hasMany(TwitchUserStreamers::class, 'user_id');
+    }
+    public function getStreamerIdsAttribute()
+    {
+        return $this->followedStreamers->pluck('streamer_id')->all();
+    }
 }

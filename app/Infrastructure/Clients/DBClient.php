@@ -70,7 +70,7 @@ class DBClient
         return TwitchUser::with('streamers')->get()->map(function ($user) {
             return [
                 'username'          => $user->username,
-                'followedStreamers' => $user->streamers->pluck('name')->all()
+                'followedStreamers' => implode(', ', $user->streamer_ids)
             ];
         })->toArray();
     }
