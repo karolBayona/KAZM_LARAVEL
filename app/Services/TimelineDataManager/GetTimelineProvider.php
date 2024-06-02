@@ -48,8 +48,8 @@ class GetTimelineProvider
             }
 
             usort($streams, function ($stream1, $stream2) {
-                $timestamp1 = strtotime($stream1['created_at']);
-                $timestamp2 = strtotime($stream2['created_at']);
+                $timestamp1 = strtotime($stream1['startedAt']);
+                $timestamp2 = strtotime($stream2['startedAt']);
                 return $timestamp2 - $timestamp1;
             });
 
