@@ -16,10 +16,11 @@ return new class extends Migration
             $table->unsignedBigInteger('streamer_id');
             $table->timestamp('followed_at')->useCurrent();
 
+            $table->timestamps();
+
             $table->primary(['user_id', 'streamer_id']);
 
             $table->foreign('user_id')->references('user_id')->on('twitch_users')->onDelete('cascade');
-            $table->foreign('streamer_id')->references('streamer_id')->on('twitch_streamers')->onDelete('cascade');
         });
     }
 
