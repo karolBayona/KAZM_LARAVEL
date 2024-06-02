@@ -16,133 +16,122 @@ use Tests\TestCase;
  */
 class FollowStreamerControllerIntegrationTest extends TestCase
 {
-    public function test_follow_streamer_successful()
-    {
-        $userId     = 123;
-        $streamerId = 456;
+    private FollowStreamersProvider $followProviderMock;
+    private FollowStreamerController $controller;
+    private int $userId;
+    private int $streamerId;
 
-        $followProviderMock = Mockery::mock(FollowStreamersProvider::class);
-        $followProviderMock->expects('execute')
-            ->with($userId, $streamerId)
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->followProviderMock = Mockery::mock(FollowStreamersProvider::class);
+        $this->controller         = new FollowStreamerController($this->followProviderMock);
+        $this->userId             = 123;
+        $this->streamerId         = 456;
+    }
+
+    /** @test */
+    public function given_valid_parameters_when_follow_streamer_then_successful_response()
+    {
+        $this->followProviderMock->expects('execute')
+            ->with($this->userId, $this->streamerId)
             ->andReturn(new JsonResponse(['message' => JsonReturnMessages::FOLLOW_STREAMER_SUCCESSFUL_RESPONSE_200], 200));
 
-        $controller = new FollowStreamerController($followProviderMock);
-
         $request = Request::create('/analytics/follow', 'POST', [
-            'userId'     => $userId,
-            'streamerId' => $streamerId,
+            'userId'     => $this->userId,
+            'streamerId' => $this->streamerId,
         ]);
 
-        $response = $controller($request);
+        $response = $this->controller->__invoke($request);
 
         $this->assertEquals(200, $response->status());
         $responseData = $response->getData(true);
         $this->assertEquals(['message' => JsonReturnMessages::FOLLOW_STREAMER_SUCCESSFUL_RESPONSE_200], $responseData);
     }
 
-    public function test_follow_streamer_missing_or_invalid_parameters()
+    /** @test */
+    public function given_missing_or_invalid_parameters_when_follow_streamer_then_error_response()
     {
-        $controller = new FollowStreamerController(Mockery::mock(FollowStreamersProvider::class));
-
         $request = Request::create('/analytics/follow', 'POST');
 
-        $response = $controller($request);
+        $response = $this->controller->__invoke($request);
 
         $this->assertEquals(400, $response->status());
         $responseData = $response->getData(true);
         $this->assertEquals(['error' => JsonReturnMessages::FOLLOW_STREAMER_PARAMETER_MISSING_OR_INVALID_400], $responseData);
     }
 
-    public function test_follow_streamer_user_not_found()
+    /** @test */
+    public function given_user_not_found_when_follow_streamer_then_error_response()
     {
-        $userId     = 123;
-        $streamerId = 456;
-
-        $followProviderMock = Mockery::mock(FollowStreamersProvider::class);
-        $followProviderMock->expects('execute')
-            ->with($userId, $streamerId)
+        $this->followProviderMock->expects('execute')
+            ->with($this->userId, $this->streamerId)
             ->andReturn(new JsonResponse(['error' => JsonReturnMessages::FOLLOW_STREAMER_NOT_FOUND_404], 404));
 
-        $controller = new FollowStreamerController($followProviderMock);
-
         $request = Request::create('/analytics/follow', 'POST', [
-            'userId'     => $userId,
-            'streamerId' => $streamerId,
+            'userId'     => $this->userId,
+            'streamerId' => $this->streamerId,
         ]);
 
-        $response = $controller($request);
+        $response = $this->controller->__invoke($request);
 
         $this->assertEquals(404, $response->status());
         $responseData = $response->getData(true);
         $this->assertEquals(['error' => JsonReturnMessages::FOLLOW_STREAMER_NOT_FOUND_404], $responseData);
     }
 
-    public function test_follow_streamer_not_found()
+    /** @test */
+    public function given_streamer_not_found_when_follow_streamer_then_error_response()
     {
-        $userId     = 123;
-        $streamerId = 456;
-
-        $followProviderMock = Mockery::mock(FollowStreamersProvider::class);
-        $followProviderMock->expects('execute')
-            ->with($userId, $streamerId)
+        $this->followProviderMock->expects('execute')
+            ->with($this->userId, $this->streamerId)
             ->andReturn(new JsonResponse(['error' => JsonReturnMessages::FOLLOW_STREAMER_NOT_FOUND_404], 404));
 
-        $controller = new FollowStreamerController($followProviderMock);
-
         $request = Request::create('/analytics/follow', 'POST', [
-            'userId'     => $userId,
-            'streamerId' => $streamerId,
+            'userId'     => $this->userId,
+            'streamerId' => $this->streamerId,
         ]);
 
-        $response = $controller($request);
+        $response = $this->controller->__invoke($request);
 
         $this->assertEquals(404, $response->status());
         $responseData = $response->getData(true);
         $this->assertEquals(['error' => JsonReturnMessages::FOLLOW_STREAMER_NOT_FOUND_404], $responseData);
     }
 
-    public function test_follow_streamer_already_follows()
+    /** @test */
+    public function given_user_already_follows_when_follow_streamer_then_conflict_response()
     {
-        $userId     = 123;
-        $streamerId = 456;
-
-        $followProviderMock = Mockery::mock(FollowStreamersProvider::class);
-        $followProviderMock->expects('execute')
-            ->with($userId, $streamerId)
+        $this->followProviderMock->expects('execute')
+            ->with($this->userId, $this->streamerId)
             ->andReturn(new JsonResponse(['error' => JsonReturnMessages::FOLLOW_STREAMERS_CONFLICT_409], 409));
 
-        $controller = new FollowStreamerController($followProviderMock);
-
         $request = Request::create('/analytics/follow', 'POST', [
-            'userId'     => $userId,
-            'streamerId' => $streamerId,
+            'userId'     => $this->userId,
+            'streamerId' => $this->streamerId,
         ]);
 
-        $response = $controller($request);
+        $response = $this->controller->__invoke($request);
 
         $this->assertEquals(409, $response->status());
         $responseData = $response->getData(true);
         $this->assertEquals(['error' => JsonReturnMessages::FOLLOW_STREAMERS_CONFLICT_409], $responseData);
     }
 
-    public function test_follow_streamer_server_error()
+    /** @test */
+    public function given_server_error_when_follow_streamer_then_internal_server_error_response()
     {
-        $userId     = 123;
-        $streamerId = 456;
-
-        $followProviderMock = Mockery::mock(FollowStreamersProvider::class);
-        $followProviderMock->expects('execute')
-            ->with($userId, $streamerId)
+        $this->followProviderMock->expects('execute')
+            ->with($this->userId, $this->streamerId)
             ->andThrow(new Exception());
 
-        $controller = new FollowStreamerController($followProviderMock);
-
         $request = Request::create('/analytics/follow', 'POST', [
-            'userId'     => $userId,
-            'streamerId' => $streamerId,
+            'userId'     => $this->userId,
+            'streamerId' => $this->streamerId,
         ]);
 
-        $response = $controller($request);
+        $response = $this->controller->__invoke($request);
 
         $this->assertEquals(500, $response->status());
         $responseData = $response->getData(true);
