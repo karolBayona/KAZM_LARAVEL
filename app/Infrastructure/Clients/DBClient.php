@@ -24,7 +24,7 @@ class DBClient
 
     public function setTokenDB($newToken): void
     {
-        Token::create(['token' => $newToken,]);
+        Token::create(['token' => $newToken]);
     }
 
     public function updateOrCreateStreamerInDB(array $streamerData): Streamers
@@ -61,7 +61,6 @@ class DBClient
     public function doesTwitchUserExist(string $username): bool
     {
         $twitchUser = TwitchUser::where('username', $username)->first();
-
         return $twitchUser !== null;
     }
 
