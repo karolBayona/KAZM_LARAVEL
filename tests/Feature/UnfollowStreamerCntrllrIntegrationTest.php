@@ -16,113 +16,106 @@ use Tests\TestCase;
  */
 class UnfollowStreamerCntrllrIntegrationTest extends TestCase
 {
-    public function test_unfollow_streamer_successful()
-    {
-        $userId     = 123;
-        $streamerId = 456;
+    private UnfollowStreamersProvider $unfollowProviderMock;
+    private UnfollowStreamerController $controller;
+    private int $userId;
+    private int $streamerId;
 
-        $unfollowProviderMock = Mockery::mock(UnfollowStreamersProvider::class);
-        $unfollowProviderMock->expects('execute')
-            ->with($userId, $streamerId)
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->unfollowProviderMock = Mockery::mock(UnfollowStreamersProvider::class);
+        $this->controller           = new UnfollowStreamerController($this->unfollowProviderMock);
+        $this->userId               = 123;
+        $this->streamerId           = 456;
+    }
+
+    /** @test */
+    public function given_valid_parameters_when_unfollow_streamer_then_successful_response()
+    {
+        $this->unfollowProviderMock->expects('execute')
+            ->with($this->userId, $this->streamerId)
             ->andReturn(new JsonResponse(['message' => JsonReturnMessages::UNFOLLOW_STREAMER_SUCCESFUL_RESPONSE_200], 200));
 
-        $controller = new UnfollowStreamerController($unfollowProviderMock);
-
         $request = Request::create('/analytics/unfollow', 'DELETE', [
-            'userId'     => $userId,
-            'streamerId' => $streamerId,
+            'userId'     => $this->userId,
+            'streamerId' => $this->streamerId,
         ]);
 
-        $response = $controller($request);
+        $response = $this->controller->__invoke($request);
 
         $this->assertEquals(200, $response->status());
         $responseData = $response->getData(true);
         $this->assertEquals(['message' => JsonReturnMessages::UNFOLLOW_STREAMER_SUCCESFUL_RESPONSE_200], $responseData);
     }
 
-    public function test_unfollow_streamer_missing_or_invalid_parameters()
+    /** @test */
+    public function given_missing_or_invalid_parameters_when_unfollow_streamer_then_error_response()
     {
-        $controller = new UnfollowStreamerController(Mockery::mock(UnfollowStreamersProvider::class));
-
         $request = Request::create('/analytics/unfollow', 'DELETE');
 
-        $response = $controller($request);
+        $response = $this->controller->__invoke($request);
 
         $this->assertEquals(400, $response->status());
         $responseData = $response->getData(true);
         $this->assertEquals(['error' => JsonReturnMessages::UNFOLLOW_STREAMER_PARAMETER_MISSING_OR_INVALID_400], $responseData);
     }
 
-    public function test_unfollow_streamer_user_not_found()
+    /** @test */
+    public function given_user_not_found_when_unfollow_streamer_then_error_response()
     {
-        $userId     = 123;
-        $streamerId = 456;
-
-        $unfollowProviderMock = Mockery::mock(UnfollowStreamersProvider::class);
-        $unfollowProviderMock->expects('execute')
-            ->with($userId, $streamerId)
+        $this->unfollowProviderMock->expects('execute')
+            ->with($this->userId, $this->streamerId)
             ->andReturn(new JsonResponse(['error' => JsonReturnMessages::UNFOLLOW_STREAMER_USER_NOT_FOUND_404], 404));
 
-        $controller = new UnfollowStreamerController($unfollowProviderMock);
-
         $request = Request::create('/analytics/unfollow', 'DELETE', [
-            'userId'     => $userId,
-            'streamerId' => $streamerId,
+            'userId'     => $this->userId,
+            'streamerId' => $this->streamerId,
         ]);
 
-        $response = $controller($request);
+        $response = $this->controller->__invoke($request);
 
         $this->assertEquals(404, $response->status());
         $responseData = $response->getData(true);
         $this->assertEquals(['error' => JsonReturnMessages::UNFOLLOW_STREAMER_USER_NOT_FOUND_404], $responseData);
     }
 
-    public function test_unfollow_streamer_already_not_following()
+    /** @test */
+    public function given_user_already_not_following_when_unfollow_streamer_then_conflict_response()
     {
-        $userId     = 123;
-        $streamerId = 456;
-
-        $unfollowProviderMock = Mockery::mock(UnfollowStreamersProvider::class);
-        $unfollowProviderMock->expects('execute')
-            ->with($userId, $streamerId)
+        $this->unfollowProviderMock->expects('execute')
+            ->with($this->userId, $this->streamerId)
             ->andReturn(new JsonResponse(['error' => JsonReturnMessages::UNFOLLOW_STREAMERS_CONFLICT_409], 409));
 
-        $controller = new UnfollowStreamerController($unfollowProviderMock);
-
         $request = Request::create('/analytics/unfollow', 'DELETE', [
-            'userId'     => $userId,
-            'streamerId' => $streamerId,
+            'userId'     => $this->userId,
+            'streamerId' => $this->streamerId,
         ]);
 
-        $response = $controller($request);
+        $response = $this->controller->__invoke($request);
 
         $this->assertEquals(409, $response->status());
         $responseData = $response->getData(true);
         $this->assertEquals(['error' => JsonReturnMessages::UNFOLLOW_STREAMERS_CONFLICT_409], $responseData);
     }
 
-    public function test_unfollow_streamer_server_error()
+    /** @test */
+    public function given_server_error_when_unfollow_streamer_then_internal_server_error_response()
     {
-        $userId     = 123;
-        $streamerId = 456;
-
-        $unfollowProviderMock = Mockery::mock(UnfollowStreamersProvider::class);
-        $unfollowProviderMock->expects('execute')
-            ->with($userId, $streamerId)
+        $this->unfollowProviderMock->expects('execute')
+            ->with($this->userId, $this->streamerId)
             ->andThrow(new Exception());
 
-        $controller = new UnfollowStreamerController($unfollowProviderMock);
-
-        $request = Request::create('/analytics/unfollow', 'POST', [
-            'userId'     => $userId,
-            'streamerId' => $streamerId,
+        $request = Request::create('/analytics/unfollow', 'DELETE', [
+            'userId'     => $this->userId,
+            'streamerId' => $this->streamerId,
         ]);
 
-        $response = $controller($request);
+        $response = $this->controller->__invoke($request);
 
         $this->assertEquals(500, $response->status());
         $responseData = $response->getData(true);
         $this->assertEquals(['error' => JsonReturnMessages::FOLLOW_STREAMERS_SERVER_ERROR_500], $responseData);
     }
-
 }
