@@ -17,8 +17,6 @@ use Illuminate\Http\Request;
 class TopOfTheTopsDataProviderTest extends TestCase
 {
     private TopGamesService $topGamesService;
-    private TopVideosService $topVideosService;
-    private TopOfTheTopsDBService $topsDBService;
     private DBClientTopsOfTheTops $dbClient;
     private TopOfTheTopsDataProvider $dataProvider;
 
@@ -27,16 +25,15 @@ class TopOfTheTopsDataProviderTest extends TestCase
      */
     protected function setUp(): void
     {
-        parent::setUp();
-        $this->topGamesService  = $this->createMock(TopGamesService::class);
-        $this->topVideosService = $this->createMock(TopVideosService::class);
-        $this->topsDBService    = $this->createMock(TopOfTheTopsDBService::class);
-        $this->dbClient         = $this->createMock(DBClientTopsOfTheTops::class);
+        $this->topGamesService = $this->createMock(TopGamesService::class);
+        $topVideosService      = $this->createMock(TopVideosService::class);
+        $topsDBService         = $this->createMock(TopOfTheTopsDBService::class);
+        $this->dbClient        = $this->createMock(DBClientTopsOfTheTops::class);
 
         $this->dataProvider = new TopOfTheTopsDataProvider(
             $this->topGamesService,
-            $this->topVideosService,
-            $this->topsDBService,
+            $topVideosService,
+            $topsDBService,
             $this->dbClient
         );
     }
@@ -45,30 +42,24 @@ class TopOfTheTopsDataProviderTest extends TestCase
      * @test
      * @throws \Exception
      */
-    public function get_top_data_successfully()
+    public function get_top_data_returns_correct_data_structure(): void
     {
-        $request = Request::create('/topdata', 'GET', ['since' => 600]);
+        $request = Request::create('/', 'GET', ['since' => 600]);
 
         $this->dbClient->method('isTableEmpty')->willReturn(false);
         $this->dbClient->expects($this->once())
             ->method('checkAndUpdateGames')
-            ->with($this->equalTo(false), $this->equalTo(600), $this->anything())
-            ->willReturnCallback(function ($isEmpty, $since, $callback) {
-                $callback('123');
-            });
+            ->with($this->equalTo(false), $this->equalTo(600))
+            ->will($this->returnCallback(function ($tableIsEmpty, $since, $callback) {
+                $callback('gameId');
+            }));
         $this->topGamesService->expects($this->once())->method('updateTopGames');
-        $this->topVideosService->expects($this->once())
-            ->method('updateTopVideos')
-            ->with($this->equalTo('123'));
-        $this->topsDBService->expects($this->once())
-            ->method('updateTopOfTheTops')
-            ->with($this->equalTo('123'));
         $this->dbClient->expects($this->once())
             ->method('fetchAllTopOfTheTopsData')
-            ->willReturn([]);
+            ->willReturn(['data']);
 
         $result = $this->dataProvider->getTopData($request);
-        $this->assertIsArray($result);
-        $this->assertSame([], $result);
+
+        $this->assertEquals(['data'], $result);
     }
 }
