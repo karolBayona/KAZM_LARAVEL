@@ -4,7 +4,7 @@ namespace Infrastructure\Controllers;
 
 use App\Config\JsonReturnMessages;
 use App\Infrastructure\Controllers\CreateNewUserController;
-use App\Services\UsersDataManager\NewUserProviderTest;
+use App\Services\UsersDataManager\CreateNewUserProvider;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Mockery;
@@ -16,9 +16,9 @@ use Tests\TestCase;
 class NewUserControllerTest extends TestCase
 {
     /**
-     * @var Mockery\MockInterface|NewUserProviderTest
+     * @var Mockery\MockInterface|CreateNewUserProvider
      */
-    protected NewUserProviderTest|Mockery\MockInterface $createUserProvider;
+    protected CreateNewUserProvider|Mockery\MockInterface $createUserProvider;
     protected CreateNewUserController $NewUserController;
     protected Request $request;
 
@@ -26,7 +26,7 @@ class NewUserControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->createUserProvider = Mockery::mock(NewUserProviderTest::class);
+        $this->createUserProvider = Mockery::mock(CreateNewUserProvider::class);
         $this->NewUserController = new CreateNewUserController($this->createUserProvider);
         $this->request = Request::create('/users', 'POST', ['username' => 'testuser', 'password' => 'testpassword']);
     }

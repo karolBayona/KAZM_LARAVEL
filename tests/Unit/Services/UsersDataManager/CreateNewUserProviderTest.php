@@ -4,7 +4,7 @@ namespace Services\UsersDataManager;
 
 use App\Config\JsonReturnMessages;
 use App\Infrastructure\Clients\DBClient;
-use App\Services\UsersDataManager\NewUserProviderTest;
+use App\Services\UsersDataManager\CreateNewUserProvider;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Mockery;
@@ -16,14 +16,14 @@ use Tests\TestCase;
 class CreateNewUserProviderTest extends TestCase
 {
     private $dbClientMock;
-    private NewUserProviderTest $newUserProvider;
+    private CreateNewUserProvider $newUserProvider;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->dbClientMock    = Mockery::mock(DBClient::class);
-        $this->newUserProvider = new NewUserProviderTest($this->dbClientMock);
+        $this->newUserProvider = new CreateNewUserProvider($this->dbClientMock);
     }
 
     /** @test */
