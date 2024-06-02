@@ -2,11 +2,11 @@
 
 namespace Services\TopsOfTheTopsDataManager;
 
-use Exception;
-use Illuminate\Support\Carbon;
-use PHPUnit\Framework\TestCase;
-use App\Services\TopsOfTheTopsDataManager\TopOfTheTopsDBService;
 use App\Infrastructure\Clients\DBClientTopsOfTheTops;
+use App\Services\TopsOfTheTopsDataManager\TopOfTheTopsDBService;
+use App\Infrastructure\Serializers\TopOfTheTopsSerializer;
+use PHPUnit\Framework\MockObject\Exception;
+use PHPUnit\Framework\TestCase;
 use Illuminate\Support\Facades\Date;
 
 /**
@@ -15,21 +15,23 @@ use Illuminate\Support\Facades\Date;
 class TopOfTheTopsDBServiceTest extends TestCase
 {
     private DBClientTopsOfTheTops $dbClient;
+    private TopOfTheTopsDBService $service;
 
     /**
-     * @throws \PHPUnit\Framework\MockObject\Exception
+     * @throws Exception
      */
     protected function setUp(): void
     {
         parent::setUp();
         $this->dbClient = $this->createMock(DBClientTopsOfTheTops::class);
+        $this->service  = new TopOfTheTopsDBService($this->dbClient);
     }
 
     /**
      * @test
-     * @throws Exception
+     * @throws \Exception
      */
-    public function update_top_of_the_tops_successfully()
+    public function update_top_of_the_tops_successfully(): void
     {
         $gameId   = '123';
         $gameName = 'Sample Game';
@@ -45,62 +47,90 @@ class TopOfTheTopsDBServiceTest extends TestCase
             'created_at'  => Date::now()
         ];
 
-        $this->dbClient->method('getTopGameData')->willReturn($gameName);
-        $this->dbClient->method('getTopDataForGame')->willReturn($topData);
-        $this->dbClient->method('getVideoDetailsForTopGame')->willReturn($videoDetails);
+
+        $fields = TopOfTheTopsSerializer::serialize($gameId, $gameName, $topData, $videoDetails);
+
+
+        $this->dbClient->expects($this->once())
+            ->method('getTopGameData')
+            ->with($gameId)
+            ->willReturn($gameName);
+
+        $this->dbClient->expects($this->once())
+            ->method('getTopDataForGame')
+            ->with($gameId)
+            ->willReturn($topData);
+
+        $this->dbClient->expects($this->once())
+            ->method('getVideoDetailsForTopGame')
+            ->with($topData->user_name, $gameId, $topData->most_viewed_views)
+            ->willReturn($videoDetails);
 
         $this->dbClient->expects($this->once())
             ->method('updateTopOfTheTopsTable')
-            ->with(
-                $this->equalTo($gameId),
-                $this->callback(function ($fields) use ($gameId, $gameName, $topData, $videoDetails) {
-                    return
-                        $fields['game_id'] === $gameId && $fields['game_name'] === $gameName && $fields['user_name'] === $topData->user_name && $fields['total_videos'] === $topData->total_videos && $fields['total_views'] === $topData->total_views && $fields['most_viewed_title'] === $videoDetails->video_title && $fields['most_viewed_views'] === $topData->most_viewed_views && $fields['most_viewed_duration'] === $videoDetails->duration && $fields['most_viewed_created_at'] === $videoDetails->created_at && $fields['last_updated_at'] instanceof Carbon;
-                })
-            );
+            ->with($gameId, $this->callback(function ($actualFields) use ($fields) {
+                // Ensure the dates are compared as strings
+                $fields['most_viewed_created_at'] = $fields['most_viewed_created_at']->toDateTimeString();
+                $fields['last_updated_at']        = $fields['last_updated_at']->toDateTimeString();
 
-        $service = new TopOfTheTopsDBService($this->dbClient);
-        $service->updateTopOfTheTops($gameId);
+                $actualFields['most_viewed_created_at'] = $actualFields['most_viewed_created_at']->toDateTimeString();
+                $actualFields['last_updated_at']        = $actualFields['last_updated_at']->toDateTimeString();
+
+                return $actualFields == $fields;
+            }));
+
+
+        $this->service->updateTopOfTheTops($gameId);
     }
 
     /**
      * @test
      */
-    public function update_top_of_the_tops_game_name_not_found()
+    public function update_top_of_the_tops_throws_exception_when_game_name_not_found(): void
     {
         $gameId = '123';
-        $this->dbClient->method('getTopGameData')->willReturn(null);
 
-        $this->expectException(Exception::class);
+        $this->dbClient->expects($this->once())
+            ->method('getTopGameData')
+            ->with($gameId)
+            ->willReturn(null);
+
+        $this->expectException(\Exception::class);
         $this->expectExceptionMessage('No se encontró el nombre del juego para el game_id proporcionado');
         $this->expectExceptionCode(404);
 
-        $service = new TopOfTheTopsDBService($this->dbClient);
-        $service->updateTopOfTheTops($gameId);
+        $this->service->updateTopOfTheTops($gameId);
     }
 
     /**
      * @test
      */
-    public function update_top_of_the_tops_top_data_not_found()
+    public function update_top_of_the_tops_throws_exception_when_top_data_not_found(): void
     {
         $gameId   = '123';
         $gameName = 'Sample Game';
-        $this->dbClient->method('getTopGameData')->willReturn($gameName);
-        $this->dbClient->method('getTopDataForGame')->willReturn(null);
 
-        $this->expectException(Exception::class);
+        $this->dbClient->expects($this->once())
+            ->method('getTopGameData')
+            ->with($gameId)
+            ->willReturn($gameName);
+
+        $this->dbClient->expects($this->once())
+            ->method('getTopDataForGame')
+            ->with($gameId)
+            ->willReturn(null);
+
+        $this->expectException(\Exception::class);
         $this->expectExceptionMessage('No se encontraron datos para el game_id proporcionado en la tabla top_videos');
         $this->expectExceptionCode(404);
 
-        $service = new TopOfTheTopsDBService($this->dbClient);
-        $service->updateTopOfTheTops($gameId);
+        $this->service->updateTopOfTheTops($gameId);
     }
 
     /**
      * @test
      */
-    public function update_top_of_the_tops_video_details_not_found()
+    public function update_top_of_the_tops_throws_exception_when_video_details_not_found(): void
     {
         $gameId   = '123';
         $gameName = 'Sample Game';
@@ -111,15 +141,25 @@ class TopOfTheTopsDBServiceTest extends TestCase
             'most_viewed_views' => 500
         ];
 
-        $this->dbClient->method('getTopGameData')->willReturn($gameName);
-        $this->dbClient->method('getTopDataForGame')->willReturn($topData);
-        $this->dbClient->method('getVideoDetailsForTopGame')->willReturn(null);
+        $this->dbClient->expects($this->once())
+            ->method('getTopGameData')
+            ->with($gameId)
+            ->willReturn($gameName);
 
-        $this->expectException(Exception::class);
+        $this->dbClient->expects($this->once())
+            ->method('getTopDataForGame')
+            ->with($gameId)
+            ->willReturn($topData);
+
+        $this->dbClient->expects($this->once())
+            ->method('getVideoDetailsForTopGame')
+            ->with($topData->user_name, $gameId, $topData->most_viewed_views)
+            ->willReturn(null);
+
+        $this->expectException(\Exception::class);
         $this->expectExceptionMessage('No se encontraron detalles de videos para el game_id proporcionado');
         $this->expectExceptionCode(404);
 
-        $service = new TopOfTheTopsDBService($this->dbClient);
-        $service->updateTopOfTheTops($gameId);
+        $this->service->updateTopOfTheTops($gameId);
     }
 }
