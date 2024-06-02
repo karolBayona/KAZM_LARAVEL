@@ -24,7 +24,7 @@ class DBClient
 
     public function setTokenDB($newToken): void
     {
-        Token::create(['token' => $newToken,]);
+        Token::create(['token' => $newToken]);
     }
 
     public function updateOrCreateStreamerInDB(array $streamerData): Streamers
@@ -61,7 +61,6 @@ class DBClient
     public function doesTwitchUserExist(string $username): bool
     {
         $twitchUser = TwitchUser::where('username', $username)->first();
-
         return $twitchUser !== null;
     }
 
@@ -93,6 +92,14 @@ class DBClient
         $user = TwitchUser::findOrFail($userId);
         if (!$this->doesUserFollowStreamer($userId, $streamerId)) {
             $user->streamers()->attach($streamerId, ['followed_at' => now()]);
+        }
+    }
+
+    public function unfollowStreamer(int $userId, int $streamerId): void
+    {
+        $user = TwitchUser::findOrFail($userId);
+        if ($this->doesUserFollowStreamer($userId, $streamerId)) {
+            $user->streamers()->detach($streamerId);
         }
     }
 }
