@@ -95,4 +95,12 @@ class DBClient
             $user->streamers()->attach($streamerId, ['followed_at' => now()]);
         }
     }
+
+    public function unfollowStreamer(int $userId, int $streamerId): void
+    {
+        $user = TwitchUser::findOrFail($userId);
+        if ($this->doesUserFollowStreamer($userId, $streamerId)) {
+            $user->streamers()->detach($streamerId);
+        }
+    }
 }
