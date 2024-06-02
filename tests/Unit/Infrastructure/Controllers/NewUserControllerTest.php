@@ -4,7 +4,7 @@ namespace Infrastructure\Controllers;
 
 use App\Config\JsonReturnMessages;
 use App\Infrastructure\Controllers\CreateNewUserController;
-use App\Services\UsersDataManager\CreateNewUserProvider;
+use App\Services\UsersDataManager\NewUserProviderTest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Mockery;
@@ -16,9 +16,9 @@ use Tests\TestCase;
 class NewUserControllerTest extends TestCase
 {
     /**
-     * @var Mockery\MockInterface|CreateNewUserProvider
+     * @var Mockery\MockInterface|NewUserProviderTest
      */
-    protected CreateNewUserProvider|Mockery\MockInterface $createUserProvider;
+    protected NewUserProviderTest|Mockery\MockInterface $createUserProvider;
     protected CreateNewUserController $NewUserController;
     protected Request $request;
 
@@ -26,7 +26,7 @@ class NewUserControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->createUserProvider = Mockery::mock(CreateNewUserProvider::class);
+        $this->createUserProvider = Mockery::mock(NewUserProviderTest::class);
         $this->NewUserController = new CreateNewUserController($this->createUserProvider);
         $this->request = Request::create('/users', 'POST', ['username' => 'testuser', 'password' => 'testpassword']);
     }
@@ -36,7 +36,9 @@ class NewUserControllerTest extends TestCase
         Mockery::close();
     }
 
-    public function test_response_json_parameter_missing()
+
+    /** @test */
+    public function response_json_parameter_missing()
     {
         $request = Request::create('/users', 'POST', []);
 
@@ -48,7 +50,9 @@ class NewUserControllerTest extends TestCase
         $this->assertEquals(400, $response->getStatusCode());
     }
 
-    public function test_response_json_successful_creation()
+
+    /** @test */
+    public function response_json_successful_creation()
     {
         $this->createUserProvider->shouldReceive('execute')
             ->with('testuser', 'testpassword')

@@ -31,7 +31,9 @@ class GetUsersListControllerTest extends TestCase
         Mockery::close();
     }
 
-    public function testInvokeReturnsResponseFromProvider(): void
+
+    /** @test */
+    public function invoke_returns_response_from_provider(): void
     {
         $responseData = ['user1', 'user2'];
         $response = new JsonResponse($responseData);
