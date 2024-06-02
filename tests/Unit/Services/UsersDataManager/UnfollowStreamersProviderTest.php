@@ -3,15 +3,10 @@
 namespace Services\UsersDataManager;
 
 use App\Config\JsonReturnMessages;
-use App\Config\TwitchConfig;
-use App\Infrastructure\Clients\APIClient;
 use App\Infrastructure\Clients\DBClient;
-use App\Services\TokenProvider;
 use App\Services\UsersDataManager\UnfollowStreamersProvider;
 use Exception;
-use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Client\Response as HttpResponse;
 use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
@@ -22,9 +17,6 @@ use Tests\TestCase;
 class UnfollowStreamersProviderTest extends TestCase
 {
     protected MockInterface $dbClient;
-    protected MockInterface $apiClient;
-    protected MockInterface $tokenProvider;
-    protected MockInterface $twitchConfig;
     protected UnfollowStreamersProvider $unfollowProvider;
 
     protected function setUp(): void
@@ -32,10 +24,7 @@ class UnfollowStreamersProviderTest extends TestCase
         parent::setUp();
 
         $this->dbClient         = Mockery::mock(DBClient::class);
-        $this->apiClient        = Mockery::mock(APIClient::class);
-        $this->tokenProvider    = Mockery::mock(TokenProvider::class);
-        $this->twitchConfig     = Mockery::mock(TwitchConfig::class);
-        $this->unfollowProvider = new UnfollowStreamersProvider($this->dbClient, $this->apiClient, $this->tokenProvider, $this->twitchConfig);
+        $this->unfollowProvider = new UnfollowStreamersProvider($this->dbClient);
     }
 
     protected function tearDown(): void
@@ -61,5 +50,30 @@ class UnfollowStreamersProviderTest extends TestCase
         $this->assertInstanceOf(JsonResponse::class, $response);
         $this->assertEquals(JsonReturnMessages::UNFOLLOW_STREAMER_USER_NOT_FOUND_404, $response->getData()->error);
         $this->assertEquals(404, $response->getStatusCode());
+    }
+
+    /**
+     * @test
+     * @throws Exception
+     */
+    public function given_a_streamerId_not_found_returns_error_409()
+    {
+        $this->dbClient
+            ->expects('doesTwitchUserIdExist')
+            ->once()
+            ->with(1)
+            ->andReturn(true);
+
+        $this->dbClient
+            ->expects('doesUserFollowStreamer')
+            ->once()
+            ->with(1, 999)
+            ->andReturn(false);
+
+        $response = $this->unfollowProvider->execute(1, 999);
+
+        $this->assertInstanceOf(JsonResponse::class, $response);
+        $this->assertEquals(JsonReturnMessages::UNFOLLOW_STREAMERS_CONFLICT_409, $response->getData()->error);
+        $this->assertEquals(409, $response->getStatusCode());
     }
 }

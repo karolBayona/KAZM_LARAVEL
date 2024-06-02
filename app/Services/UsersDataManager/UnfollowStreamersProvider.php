@@ -15,11 +15,16 @@ class UnfollowStreamersProvider
         $this->dbClient = $dbClient;
     }
 
-    public function execute(int $userId): JsonResponse
+    public function execute(int $userId, int $streamerId): JsonResponse
     {
         if (!$this->dbClient->doesTwitchUserIdExist($userId)) {
             return response()->json(['error' => JsonReturnMessages::UNFOLLOW_STREAMER_USER_NOT_FOUND_404], 404);
         }
+
+        if (!$this->dbClient->doesUserFollowStreamer($userId, $streamerId)) {
+            return response()->json(['error' => JsonReturnMessages::UNFOLLOW_STREAMERS_CONFLICT_409], 409);
+        }
+
         return response()->json(['error' => JsonReturnMessages::FOLLOW_STREAMERS_SERVER_ERROR_500], 500);
     }
 }
