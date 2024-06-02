@@ -3,15 +3,15 @@
 namespace App\Infrastructure\Controllers;
 
 use App\Config\JsonReturnMessages;
-use App\Services\UsersDataManager\CreateNewUserProvider;
+use App\Services\UsersDataManager\NewUserProviderTest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class CreateNewUserController
 {
-    private CreateNewUserProvider $newUserProvider;
+    private NewUserProviderTest $newUserProvider;
 
-    public function __construct(CreateNewUserProvider $newUserProvider)
+    public function __construct(NewUserProviderTest $newUserProvider)
     {
         $this->newUserProvider = $newUserProvider;
     }

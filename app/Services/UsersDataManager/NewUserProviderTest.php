@@ -7,7 +7,7 @@ use App\Infrastructure\Clients\DBClient;
 use Exception;
 use Illuminate\Http\JsonResponse;
 
-class CreateNewUserProvider
+class NewUserProviderTest
 {
     private DBClient $dbClient;
     public function __construct(DBClient $dbClient)
