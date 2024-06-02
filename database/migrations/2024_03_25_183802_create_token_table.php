@@ -16,6 +16,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('token');
+        Schema::dropIfExists('tokens');
     }
 };

@@ -4,8 +4,12 @@ namespace App\Services\TopsOfTheTopsDataManager;
 
 use App\Config\JsonReturnMessages;
 use App\Infrastructure\Clients\DBClientTopsOfTheTops;
+use App\Infrastructure\Serializers\TopOfTheTopsSerializer;
 use Exception;
 
+/**
+ * @SuppressWarnings(PHPMD.StaticAccess)
+ */
 class TopOfTheTopsDBService
 {
     private DBClientTopsOfTheTops $dbClient;
@@ -35,18 +39,7 @@ class TopOfTheTopsDBService
             throw new Exception(JsonReturnMessages::VIDEO_DETAILS_NOT_FOUND_404, 404);
         }
 
-        $fields = [
-            'game_id'                => $gameId,
-            'game_name'              => $gameName,
-            'user_name'              => $topData->user_name,
-            'total_videos'           => $topData->total_videos,
-            'total_views'            => $topData->total_views,
-            'most_viewed_title'      => $videoDetails->video_title,
-            'most_viewed_views'      => $topData->most_viewed_views,
-            'most_viewed_duration'   => $videoDetails->duration,
-            'most_viewed_created_at' => $videoDetails->created_at,
-            'last_updated_at'        => now()
-        ];
+        $fields = TopOfTheTopsSerializer::serialize($gameId, $gameName, $topData, $videoDetails);
         $this->dbClient->updateTopOfTheTopsTable($gameId, $fields);
     }
 }
