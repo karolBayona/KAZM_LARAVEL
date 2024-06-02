@@ -36,7 +36,9 @@ class NewUserControllerTest extends TestCase
         Mockery::close();
     }
 
-    public function test_response_json_parameter_missing()
+
+    /** @test */
+    public function response_json_parameter_missing()
     {
         $request = Request::create('/users', 'POST', []);
 
@@ -48,7 +50,9 @@ class NewUserControllerTest extends TestCase
         $this->assertEquals(400, $response->getStatusCode());
     }
 
-    public function test_response_json_successful_creation()
+
+    /** @test */
+    public function response_json_successful_creation()
     {
         $this->createUserProvider->shouldReceive('execute')
             ->with('testuser', 'testpassword')

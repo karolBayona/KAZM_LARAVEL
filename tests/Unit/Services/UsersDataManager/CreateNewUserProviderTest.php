@@ -10,6 +10,9 @@ use Illuminate\Http\JsonResponse;
 use Mockery;
 use Tests\TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.StaticAccess)
+ */
 class CreateNewUserProviderTest extends TestCase
 {
     private $dbClientMock;
@@ -88,6 +91,5 @@ class CreateNewUserProviderTest extends TestCase
     protected function tearDown(): void
     {
         Mockery::close();
-        parent::tearDown();
     }
 }
