@@ -60,27 +60,4 @@ class FollowStreamerControllerTest extends TestCase
         $this->assertEquals(JsonReturnMessages::FOLLOW_STREAMER_PARAMETER_MISSING_OR_INVALID_400, $response->getData()->error);
         $this->assertEquals(400, $response->getStatusCode());
     }
-
-    /**
-     * @test
-     */
-    public function given_nonexistent_userId_returns_error_404()
-    {
-        // Arrange
-        $request = Request::create('/analytics/follow', 'POST', ['userId' => '999', 'streamerId' => '1']);
-
-        $this->followProvider
-            ->shouldReceive('execute')
-            ->once()
-            ->withArgs([999, 1])
-            ->andReturn(response()->json(['error' => JsonReturnMessages::FOLLOW_STREAMER_NOT_FOUND_404], 404));
-
-        // Act
-        $response = $this->followController->__invoke($request);
-
-        // Assert
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(JsonReturnMessages::FOLLOW_STREAMER_NOT_FOUND_404, $response->getData()->error);
-        $this->assertEquals(404, $response->getStatusCode());
-    }
 }

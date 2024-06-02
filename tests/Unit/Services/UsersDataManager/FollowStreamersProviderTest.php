@@ -69,6 +69,9 @@ class FollowStreamersProviderTest extends TestCase
      */
     public function given_a_streamerId_not_found_returns_error_404()
     {
+        $guzzleResponse = new GuzzleResponse(200, [], json_encode(['data' => []]));
+        $response       = new HttpResponse($guzzleResponse);
+
         $this->dbClient
             ->expects('doesTwitchUserIdExist')
             ->once()
@@ -82,9 +85,6 @@ class FollowStreamersProviderTest extends TestCase
             ->expects('clientId')
             ->once()
             ->andReturn('fake_client_id');
-
-        $guzzleResponse = new GuzzleResponse(200, [], json_encode(['data' => []]));
-        $response       = new HttpResponse($guzzleResponse);
         $this->apiClient
             ->expects('getDataForStreamersFromAPI')
             ->once()
@@ -104,6 +104,9 @@ class FollowStreamersProviderTest extends TestCase
      */
     public function test_given_user_already_follows_streamer_returns_error_409()
     {
+        $guzzleResponse = new GuzzleResponse(200, [], json_encode(['data' => [['id' => '999', 'login' => 'teststreamer']]]));
+        $response       = new HttpResponse($guzzleResponse);
+
         $this->dbClient
             ->expects('doesTwitchUserIdExist')
             ->once()
@@ -117,9 +120,6 @@ class FollowStreamersProviderTest extends TestCase
             ->expects('clientId')
             ->once()
             ->andReturn('fake_client_id');
-
-        $guzzleResponse = new GuzzleResponse(200, [], json_encode(['data' => [['id' => '999', 'login' => 'teststreamer']]]));
-        $response       = new HttpResponse($guzzleResponse);
         $this->apiClient
             ->expects('getDataForStreamersFromAPI')
             ->once()
@@ -149,7 +149,6 @@ class FollowStreamersProviderTest extends TestCase
             ->once()
             ->with(1)
             ->andReturn(true);
-
         $this->tokenProvider
             ->expects('getToken')
             ->once()
@@ -200,6 +199,9 @@ class FollowStreamersProviderTest extends TestCase
      */
     public function given_valid_user_and_streamer_returns_success_200()
     {
+        $guzzleResponse = new GuzzleResponse(200, [], json_encode(['data' => [['id' => '999', 'login' => 'teststreamer']]]));
+        $response       = new HttpResponse($guzzleResponse);
+
         $this->dbClient
             ->expects('doesTwitchUserIdExist')
             ->once()
@@ -213,15 +215,11 @@ class FollowStreamersProviderTest extends TestCase
             ->expects('clientId')
             ->once()
             ->andReturn('fake_client_id');
-
-        $guzzleResponse = new GuzzleResponse(200, [], json_encode(['data' => [['id' => '999', 'login' => 'teststreamer']]]));
-        $response       = new HttpResponse($guzzleResponse);
         $this->apiClient
             ->expects('getDataForStreamersFromAPI')
             ->once()
             ->with('fake_client_id', 'fake_access_token', 999)
             ->andReturn($response);
-
         $this->dbClient
             ->expects('doesUserFollowStreamer')
             ->once()

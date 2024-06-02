@@ -63,7 +63,6 @@ class UnfollowStreamersProviderTest extends TestCase
             ->once()
             ->with(1)
             ->andReturn(true);
-
         $this->dbClient
             ->expects('doesUserFollowStreamer')
             ->once()
@@ -88,13 +87,11 @@ class UnfollowStreamersProviderTest extends TestCase
             ->once()
             ->with(1)
             ->andReturn(true);
-
         $this->dbClient
             ->expects('doesUserFollowStreamer')
             ->once()
             ->with(1, 999)
             ->andReturn(true);
-
         $this->dbClient
             ->expects('unfollowStreamer')
             ->once()

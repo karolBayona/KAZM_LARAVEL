@@ -46,7 +46,10 @@ class FollowStreamersProvider
         $clientId = $this->twitchConfig->clientId();
         try {
             $response = $this->apiClient->getDataForStreamersFromAPI($clientId, $accessToken, $streamerId);
-        } catch (Exception) {
+        } catch (Exception $e) {
+            if ($e->getCode() === 404) {
+                return response()->json(['error' => JsonReturnMessages::FOLLOW_STREAMER_NOT_FOUND_404], 404, [], JSON_UNESCAPED_UNICODE);
+            }
             return response()->json(['error' => JsonReturnMessages::FOLLOW_STREAMERS_SERVER_ERROR_500], 500, [], JSON_UNESCAPED_UNICODE);
         }
 
@@ -60,6 +63,6 @@ class FollowStreamersProvider
 
         $this->dbClient->followStreamer($userId, $streamerId);
 
-        return response()->json(['message' => JsonReturnMessages::FOLLOW_STREAMER_SUCCESSFUL_RESPONSE_200], 200);
+        return response()->json(['message' => JsonReturnMessages::FOLLOW_STREAMER_SUCCESSFUL_RESPONSE_200]);
     }
 }
