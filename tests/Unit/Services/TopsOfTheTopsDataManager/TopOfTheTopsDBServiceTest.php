@@ -3,7 +3,7 @@
 namespace Services\TopsOfTheTopsDataManager;
 
 use App\Infrastructure\Clients\DBClientTopsOfTheTops;
-use App\Services\TopsOfTheTopsDataManager\TopOfTheTopsDBService;
+use App\Services\TopsOfTheTopsDataManager\TopOfTheTopsDBProvider;
 use App\Infrastructure\Serializers\TopOfTheTopsSerializer;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Date;
 class TopOfTheTopsDBServiceTest extends TestCase
 {
     private DBClientTopsOfTheTops $dbClient;
-    private TopOfTheTopsDBService $service;
+    private TopOfTheTopsDBProvider $service;
 
     /**
      * @throws Exception
@@ -24,7 +24,7 @@ class TopOfTheTopsDBServiceTest extends TestCase
     {
         parent::setUp();
         $this->dbClient = $this->createMock(DBClientTopsOfTheTops::class);
-        $this->service  = new TopOfTheTopsDBService($this->dbClient);
+        $this->service  = new TopOfTheTopsDBProvider($this->dbClient);
     }
 
     /**

@@ -10,7 +10,7 @@ use Exception;
 /**
  * @SuppressWarnings(PHPMD.StaticAccess)
  */
-class TopOfTheTopsDBService
+class TopOfTheTopsDBProvider
 {
     private DBClientTopsOfTheTops $dbClient;
 

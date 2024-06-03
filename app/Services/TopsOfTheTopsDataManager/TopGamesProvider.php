@@ -10,7 +10,7 @@ use App\Infrastructure\Clients\DBClientTopsOfTheTops;
 use App\Services\TokenProvider;
 use Exception;
 
-#[AllowDynamicProperties] class TopGamesService
+#[AllowDynamicProperties] class TopGamesProvider
 {
     private APIClient $apiClient;
     private DBClientTopsOfTheTops $dbClient;

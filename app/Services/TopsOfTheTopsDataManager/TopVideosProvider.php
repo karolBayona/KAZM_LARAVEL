@@ -11,7 +11,7 @@ use App\Infrastructure\Clients\DBClientTopsOfTheTops;
 use App\Services\TokenProvider;
 use Exception;
 
-#[AllowDynamicProperties] class TopVideosService
+#[AllowDynamicProperties] class TopVideosProvider
 {
     private APIClient $apiClient;
     private DBClientTopsOfTheTops $dbClient;
