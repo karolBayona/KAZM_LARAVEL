@@ -12,7 +12,7 @@ use Exception;
 /**
  * @SuppressWarnings(PHPMD.StaticAccess)
  */
-class GetUsersListControllerIntegrationTest extends TestCase
+class GetUsersListControllerTest extends TestCase
 {
     use RefreshDatabase;
 

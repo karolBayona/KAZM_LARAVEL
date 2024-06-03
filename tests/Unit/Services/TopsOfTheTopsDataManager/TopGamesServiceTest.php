@@ -4,7 +4,7 @@ namespace Services\TopsOfTheTopsDataManager;
 
 use PHPUnit\Framework\MockObject\Exception;
 use Tests\TestCase;
-use App\Services\TopsOfTheTopsDataManager\TopGamesService;
+use App\Services\TopsOfTheTopsDataManager\TopGamesProvider;
 use App\Infrastructure\Clients\APIClient;
 use App\Infrastructure\Clients\DBClientTopsOfTheTops;
 use App\Services\TokenProvider;
@@ -51,7 +51,7 @@ class TopGamesServiceTest extends TestCase
         $this->apiClient->method('getDataForGamesFromAPI')->willReturn($responseMock);
         $this->dbClient->expects($this->once())->method('updateTopGamesData')->with($this->equalTo([['id' => '123', 'name' => 'GameName']]));
 
-        $service = new TopGamesService($this->tokenProvider, $this->twitchConfig, $this->apiClient, $this->dbClient);
+        $service = new TopGamesProvider($this->tokenProvider, $this->twitchConfig, $this->apiClient, $this->dbClient);
         $service->updateTopGames();
     }
 
@@ -69,7 +69,7 @@ class TopGamesServiceTest extends TestCase
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('No se encontraron juegos en la respuesta de la API de Twitch');
 
-        $service = new TopGamesService($this->tokenProvider, $this->twitchConfig, $this->apiClient, $this->dbClient);
+        $service = new TopGamesProvider($this->tokenProvider, $this->twitchConfig, $this->apiClient, $this->dbClient);
         $service->updateTopGames();
     }
 
@@ -86,7 +86,7 @@ class TopGamesServiceTest extends TestCase
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Error al obtener datos sobre los top3 juegos de la API de Twitch');
 
-        $service = new TopGamesService($this->tokenProvider, $this->twitchConfig, $this->apiClient, $this->dbClient);
+        $service = new TopGamesProvider($this->tokenProvider, $this->twitchConfig, $this->apiClient, $this->dbClient);
         $service->updateTopGames();
     }
 

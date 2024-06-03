@@ -34,7 +34,7 @@ class StreamersControllerTest extends TestCase
 
     public function test_returns_json_response_with_streamer_data()
     {
-        $this->streamersProvider->shouldReceive('execute')->andReturn(new JsonResponse(['data' => 'streamer_data'], 200));
+        $this->streamersProvider->expects('execute')->andReturn(new JsonResponse(['data' => 'streamer_data'], 200));
 
         $response = $this->streamersController->__invoke($this->request);
 
@@ -53,7 +53,7 @@ class StreamersControllerTest extends TestCase
 
     public function test_returns_not_found_for_no_existent_streamer()
     {
-        $this->streamersProvider->shouldReceive('execute')->andThrow(new Exception('Test exception', 404));
+        $this->streamersProvider->expects('execute')->andThrow(new Exception('Test exception', 404));
 
         $response = $this->streamersController->__invoke($this->request);
 
@@ -63,7 +63,7 @@ class StreamersControllerTest extends TestCase
 
     public function test_returns_service_unavailable_when_data_provider_fails()
     {
-        $this->streamersProvider->shouldReceive('execute')->andThrow(new Exception('Service unavailable', 503));
+        $this->streamersProvider->expects('execute')->andThrow(new Exception('Service unavailable', 503));
 
         $expectedError = 'Servicio no disponible. Por favor, inténtelo más tarde.';
 
@@ -76,7 +76,7 @@ class StreamersControllerTest extends TestCase
 
     public function test_returns_generic_error_response_for_unspecified_errors()
     {
-        $this->streamersProvider->shouldReceive('execute')->andThrow(new Exception('Unknown error', 500));
+        $this->streamersProvider->expects('execute')->andThrow(new Exception('Unknown error', 500));
 
         $response = $this->streamersController->__invoke($this->request);
 

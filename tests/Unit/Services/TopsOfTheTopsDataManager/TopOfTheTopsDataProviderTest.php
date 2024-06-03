@@ -4,10 +4,10 @@ namespace Tests\Unit\Services\TopsOfTheTopsDataManager;
 
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
-use App\Services\TopsOfTheTopsDataManager\TopOfTheTopsDataProvider;
-use App\Services\TopsOfTheTopsDataManager\TopGamesService;
-use App\Services\TopsOfTheTopsDataManager\TopVideosService;
-use App\Services\TopsOfTheTopsDataManager\TopOfTheTopsDBService;
+use App\Services\TopsOfTheTopsDataManager\TopOfTheTopsProvider;
+use App\Services\TopsOfTheTopsDataManager\TopGamesProvider;
+use App\Services\TopsOfTheTopsDataManager\TopVideosProvider;
+use App\Services\TopsOfTheTopsDataManager\TopOfTheTopsDBProvider;
 use App\Infrastructure\Clients\DBClientTopsOfTheTops;
 use Illuminate\Http\Request;
 
@@ -16,21 +16,21 @@ use Illuminate\Http\Request;
  */
 class TopOfTheTopsDataProviderTest extends TestCase
 {
-    private TopGamesService $topGamesService;
+    private TopGamesProvider $topGamesService;
     private DBClientTopsOfTheTops $dbClient;
-    private TopOfTheTopsDataProvider $dataProvider;
+    private TopOfTheTopsProvider $dataProvider;
 
     /**
      * @throws Exception
      */
     protected function setUp(): void
     {
-        $this->topGamesService = $this->createMock(TopGamesService::class);
-        $topVideosService      = $this->createMock(TopVideosService::class);
-        $topsDBService         = $this->createMock(TopOfTheTopsDBService::class);
+        $this->topGamesService = $this->createMock(TopGamesProvider::class);
+        $topVideosService      = $this->createMock(TopVideosProvider::class);
+        $topsDBService         = $this->createMock(TopOfTheTopsDBProvider::class);
         $this->dbClient        = $this->createMock(DBClientTopsOfTheTops::class);
 
-        $this->dataProvider = new TopOfTheTopsDataProvider(
+        $this->dataProvider = new TopOfTheTopsProvider(
             $this->topGamesService,
             $topVideosService,
             $topsDBService,

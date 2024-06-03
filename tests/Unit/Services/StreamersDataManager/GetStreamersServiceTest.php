@@ -23,10 +23,10 @@ class GetStreamersServiceTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->apiClient = $this->createMock(APIClient::class);
-        $this->dbClient  = $this->createMock(DBClient::class);
-        $this->response  = $this->createMock(Response::class);
-        $this->getStreamersService       = new GetStreamerService($this->apiClient, $this->dbClient);
+        $this->apiClient           = $this->createMock(APIClient::class);
+        $this->dbClient            = $this->createMock(DBClient::class);
+        $this->response            = $this->createMock(Response::class);
+        $this->getStreamersService = new GetStreamerService($this->apiClient, $this->dbClient);
     }
 
     /**

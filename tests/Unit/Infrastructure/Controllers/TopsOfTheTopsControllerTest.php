@@ -5,7 +5,7 @@ namespace Infrastructure\Controllers;
 use Exception;
 use Tests\TestCase;
 use App\Infrastructure\Controllers\TopOfTheTopsController;
-use App\Services\TopsOfTheTopsDataManager\TopOfTheTopsDataProvider;
+use App\Services\TopsOfTheTopsDataManager\TopOfTheTopsProvider;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Mockery;
@@ -15,13 +15,13 @@ use Mockery;
  */
 class TopsOfTheTopsControllerTest extends TestCase
 {
-    private TopOfTheTopsDataProvider $dataProvider;
+    private TopOfTheTopsProvider $dataProvider;
     private TopOfTheTopsController $controller;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->dataProvider = Mockery::mock(TopOfTheTopsDataProvider::class);
+        $this->dataProvider = Mockery::mock(TopOfTheTopsProvider::class);
         $this->controller   = new TopOfTheTopsController($this->dataProvider);
     }
 
@@ -40,7 +40,7 @@ class TopsOfTheTopsControllerTest extends TestCase
         $request      = Request::create('/topdata');
         $expectedData = ['data' => 'value'];
         $this->dataProvider
-            ->shouldReceive('getTopData')
+            ->expects('getTopData')
             ->once()
             ->with($request)
             ->andReturn($expectedData);

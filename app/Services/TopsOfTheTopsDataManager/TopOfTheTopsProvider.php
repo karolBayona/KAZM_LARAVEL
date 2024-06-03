@@ -6,14 +6,14 @@ use App\Infrastructure\Clients\DBClientTopsOfTheTops;
 use Exception;
 use Illuminate\Http\Request;
 
-class TopOfTheTopsDataProvider
+class TopOfTheTopsProvider
 {
-    private TopGamesService $topGamesService;
-    private TopVideosService $topVideosService;
-    private TopOfTheTopsDBService $topsDBService;
+    private TopGamesProvider $topGamesService;
+    private TopVideosProvider $topVideosService;
+    private TopOfTheTopsDBProvider $topsDBService;
     private DBClientTopsOfTheTops $dbClient;
 
-    public function __construct(TopGamesService $topGamesService, TopVideosService $topVideosService, TopOfTheTopsDBService $topsDBService, DBClientTopsOfTheTops $dbClient)
+    public function __construct(TopGamesProvider $topGamesService, TopVideosProvider $topVideosService, TopOfTheTopsDBProvider $topsDBService, DBClientTopsOfTheTops $dbClient)
     {
         $this->topGamesService  = $topGamesService;
         $this->topVideosService = $topVideosService;

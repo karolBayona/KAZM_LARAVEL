@@ -4,7 +4,7 @@ namespace Services\TopsOfTheTopsDataManager;
 
 use PHPUnit\Framework\MockObject\Exception;
 use Tests\TestCase;
-use App\Services\TopsOfTheTopsDataManager\TopVideosService;
+use App\Services\TopsOfTheTopsDataManager\TopVideosProvider;
 use App\Infrastructure\Clients\APIClient;
 use App\Infrastructure\Clients\DBClientTopsOfTheTops;
 use App\Services\TokenProvider;
@@ -68,7 +68,7 @@ class TopVideosServiceTest extends TestCase
                 $this->equalTo($gameId)
             );
 
-        $service = new TopVideosService(
+        $service = new TopVideosProvider(
             $this->tokenProvider,
             $this->twitchConfig,
             $this->apiClient,
@@ -93,7 +93,7 @@ class TopVideosServiceTest extends TestCase
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('No se encontraron videos en la respuesta de la API de Twitch');
 
-        $service = new TopVideosService(
+        $service = new TopVideosProvider(
             $this->tokenProvider,
             $this->twitchConfig,
             $this->apiClient,
@@ -116,7 +116,7 @@ class TopVideosServiceTest extends TestCase
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Error al obtener datos sobre los top40 videos de la API de Twitch');
 
-        $service = new TopVideosService(
+        $service = new TopVideosProvider(
             $this->tokenProvider,
             $this->twitchConfig,
             $this->apiClient,

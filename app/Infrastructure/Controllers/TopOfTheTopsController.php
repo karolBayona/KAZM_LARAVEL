@@ -2,16 +2,16 @@
 
 namespace App\Infrastructure\Controllers;
 
-use App\Services\TopsOfTheTopsDataManager\TopOfTheTopsDataProvider;
+use App\Services\TopsOfTheTopsDataManager\TopOfTheTopsProvider;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class TopOfTheTopsController
 {
-    private TopOfTheTopsDataProvider $dataProvider;
+    private TopOfTheTopsProvider $dataProvider;
 
-    public function __construct(TopOfTheTopsDataProvider $dataProvider)
+    public function __construct(TopOfTheTopsProvider $dataProvider)
     {
         $this->dataProvider = $dataProvider;
     }

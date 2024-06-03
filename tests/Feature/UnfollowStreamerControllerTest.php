@@ -14,7 +14,7 @@ use Tests\TestCase;
 /**
  * @SuppressWarnings(PHPMD.StaticAccess)
  */
-class UnfollowStreamerCntrllrIntegrationTest extends TestCase
+class UnfollowStreamerControllerTest extends TestCase
 {
     private UnfollowStreamersProvider $unfollowProviderMock;
     private UnfollowStreamerController $controller;
