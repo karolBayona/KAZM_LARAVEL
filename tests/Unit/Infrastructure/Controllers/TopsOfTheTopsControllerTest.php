@@ -40,7 +40,7 @@ class TopsOfTheTopsControllerTest extends TestCase
         $request      = Request::create('/topdata');
         $expectedData = ['data' => 'value'];
         $this->dataProvider
-            ->shouldReceive('getTopData')
+            ->expects('getTopData')
             ->once()
             ->with($request)
             ->andReturn($expectedData);

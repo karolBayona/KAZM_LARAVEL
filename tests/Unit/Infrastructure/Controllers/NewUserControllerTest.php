@@ -54,7 +54,7 @@ class NewUserControllerTest extends TestCase
     /** @test */
     public function response_json_successful_creation()
     {
-        $this->createUserProvider->shouldReceive('execute')
+        $this->createUserProvider->expects('execute')
             ->with('testuser', 'testpassword')
             ->andReturn(new JsonResponse(['username' => 'testuser', 'message' => JsonReturnMessages::NEW_USER_SUCCESSFUL_RESPONSE_201], 201));
 

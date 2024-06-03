@@ -22,7 +22,7 @@ class GetUsersListControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->usersListProvider = Mockery::mock(GetUsersListProvider::class);
+        $this->usersListProvider  = Mockery::mock(GetUsersListProvider::class);
         $this->UserListController = new GetUsersListController($this->usersListProvider);
     }
 
@@ -31,16 +31,15 @@ class GetUsersListControllerTest extends TestCase
         Mockery::close();
     }
 
-
     /** @test */
     public function invoke_returns_response_from_provider(): void
     {
         $responseData = ['user1', 'user2'];
-        $response = new JsonResponse($responseData);
-        $request = new Request();
+        $response     = new JsonResponse($responseData);
+        $request      = new Request();
 
         $this->usersListProvider
-            ->shouldReceive('execute')
+            ->expects('execute')
             ->once()
             ->andReturn($response);
 
