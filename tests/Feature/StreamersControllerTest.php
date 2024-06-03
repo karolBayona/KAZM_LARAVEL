@@ -10,7 +10,7 @@ use Illuminate\Testing\TestResponse;
 use Mockery\MockInterface;
 use Tests\TestCase;
 
-class StreamersControllerIntegrationTest extends TestCase
+class StreamersControllerTest extends TestCase
 {
     use RefreshDatabase;
 

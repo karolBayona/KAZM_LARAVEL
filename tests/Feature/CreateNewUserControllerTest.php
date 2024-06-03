@@ -12,7 +12,7 @@ use Tests\TestCase;
 /**
  * @SuppressWarnings(PHPMD.StaticAccess)
  */
-class CreateNewUserControllerIntegrationTest extends TestCase
+class CreateNewUserControllerTest extends TestCase
 {
     use RefreshDatabase;
 
